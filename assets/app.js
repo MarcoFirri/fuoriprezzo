@@ -79,20 +79,25 @@ const PRODUCTS = (window.FP_OFFERTE || []).map(o=>{
 }).filter(p=>CAT[p.cat] && p.asin && p.price).map(p=>(p.icon = ICONS[p.icon] ? p.icon : CAT[p.cat].icon, p));
 const BY_ID = Object.fromEntries(PRODUCTS.map(p=>[p.id,p]));
 const expired = p => !!(p.ends && p.ends < new Date());
-const live = () => PRODUCTS.filter(p=>!expired(p));
+const DAY = 24*3600*1000;
+// Un prezzo controllato più di 24 ore fa non viene mostrato: si invita a verificarlo su Amazon
+const stale = p => !expired(p) && (!p.checked || Date.now() - p.checked > DAY);
+const noPrice = p => expired(p) || stale(p);
+const live = () => PRODUCTS.filter(p=>!noPrice(p));
 const affLink = p => `https://www.amazon.it/dp/${encodeURIComponent(p.asin)}${TAG?`?tag=${encodeURIComponent(TAG)}`:''}`;
 const linkAttrs = 'target="_blank" rel="nofollow sponsored noopener"';
 function dealOfDay(){
   const chosen = BY_ID[CFG.sceltaDelGiorno];
-  if(chosen && !expired(chosen)) return chosen;
-  return [...live()].sort((a,b)=>b.disc-a.disc)[0] || chosen || null;
+  if(chosen && !noPrice(chosen)) return chosen;
+  return [...live()].sort((a,b)=>b.disc-a.disc)[0] || null;
 }
 function sortList(list, mode){
   const l = [...list];
   if(mode==='prezzo') l.sort((a,b)=>a.price-b.price);
   else if(mode==='risparmio') l.sort((a,b)=>((b.ref||b.price)-b.price)-((a.ref||a.price)-a.price));
   else l.sort((a,b)=>b.disc-a.disc);
-  return l.sort((a,b)=>expired(a)-expired(b));
+  const rank = p => expired(p) ? 2 : stale(p) ? 1 : 0;
+  return l.sort((a,b)=>rank(a)-rank(b));
 }
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -130,20 +135,21 @@ const priceChart = p => p.hist.length >= 5 ? spark(p) : compare(p);
 
 /* ===== Componenti ===== */
 function card(p){
-  const c = CAT[p.cat], ex = expired(p);
+  const c = CAT[p.cat], ex = expired(p), np = noPrice(p);
   const right = ex ? 'Offerta terminata'
+    : np ? `Ultimo controllo ${whenChecked(p.checked)}`
     : p.ends ? `Termina tra ${leftText(p.ends - new Date())}`
     : p.checked ? `Controllato ${whenChecked(p.checked)}` : '';
-  return `<article class="card${ex?' expired':''}" data-id="${esc(p.id)}" style="--c:${c.c}" tabindex="0" aria-label="${esc(p.short)}, ${eur(p.price)}">
+  return `<article class="card${np?' expired':''}" data-id="${esc(p.id)}" style="--c:${c.c}" tabindex="0" aria-label="${esc(p.short)}${np?'':`, ${eur(p.price)}`}">
     <div class="card-media">${icon(p.icon,'pi')}
-      ${p.disc>0?`<span class="sticker disc">−${p.disc}%</span>`:''}
-      ${p.badge?`<span class="min-badge">${icon('bolt')}${esc(p.badge)}</span>`:''}
-      ${p.label&&!ex?`<span class="deal-flag">${esc(p.label)}</span>`:''}
-      ${ex?'<span class="exp-flag">Terminata</span>':''}
+      ${p.disc>0&&!np?`<span class="sticker disc">−${p.disc}%</span>`:''}
+      ${p.badge&&!np?`<span class="min-badge">${icon('bolt')}${esc(p.badge)}</span>`:''}
+      ${p.label&&!np?`<span class="deal-flag">${esc(p.label)}</span>`:''}
+      ${np?`<span class="exp-flag">${ex?'Terminata':'Da verificare'}</span>`:''}
     </div>
     <h3>${esc(p.name)}</h3>
-    <div class="card-prices"><span class="card-price">${eur(p.price)}</span>${p.ref?`<span class="was" title="${esc(p.refLabel)}">${eur(p.ref)}</span>`:''}</div>
-    <div class="card-foot"><span>${p.ref?`${esc(p.refShort)}<br><b>${eur(p.ref)}</b>`:''}</span><span style="text-align:right">${right}</span></div>
+    <div class="card-prices">${np?`<span class="card-price" style="font-size:19px">Verifica il prezzo</span>`:`<span class="card-price">${eur(p.price)}</span>${p.ref?`<span class="was" title="${esc(p.refLabel)}">${eur(p.ref)}</span>`:''}`}</div>
+    <div class="card-foot"><span>${p.ref&&!np?`${esc(p.refShort)}<br><b>${eur(p.ref)}</b>`:''}</span><span style="text-align:right">${right}</span></div>
     <a class="btn btn-hot btn-sm go" href="${affLink(p)}" ${linkAttrs}>Vedi su Amazon <span class="arr">→</span></a>
   </article>`;
 }
@@ -205,7 +211,7 @@ const howSection = () => `<section class="wrap sec" id="come-funziona">
 function home(){
   const pick = dealOfDay();
   const list = sortList(PRODUCTS, 'sconto');
-  const top = pick ? hero(pick) : `<section class="wrap prose"><h1>Le prime offerte arrivano a breve</h1><p>Stiamo controllando i prezzi su Amazon.it. Torna più tardi per la scelta del giorno.</p></section>`;
+  const top = pick ? hero(pick) : `<section class="wrap prose"><h1>La nuova scelta del giorno arriva a breve</h1><p>Stiamo ricontrollando i prezzi su Amazon.it. Intanto guarda le offerte qui sotto.</p></section>`;
   return top + (list.length ? `
   <section class="wrap sec">
     <div class="sec-head"><div><h2>Le offerte di oggi</h2><p>Prezzi controllati su Amazon.it, con lo sconto calcolato sul prezzo più basso degli ultimi 30 giorni.</p></div><a class="link-more" href="#offerte">Vedi tutte <span class="arr">→</span></a></div>
@@ -384,8 +390,17 @@ const drawer = document.getElementById('drawer'), backdrop = document.getElement
 let lastFocus;
 function openDrawer(id){
   const p = BY_ID[id]; if(!p) return;
-  const c = CAT[p.cat], ex = expired(p);
+  const c = CAT[p.cat], ex = expired(p), np = noPrice(p);
   document.getElementById('d-cat').textContent = c.name;
+  if(np){
+    document.getElementById('d-body').innerHTML = `
+    <div class="d-media" style="--c:${c.c}">${icon(p.icon,'pi')}</div>
+    <h2 id="d-title">${esc(p.name)}</h2>
+    <div class="verdict meh">${icon('info')}<span><b>${ex?'Offerta terminata.':'Prezzo da verificare.'}</b> Ultimo controllo ${whenChecked(p.checked)}. Il prezzo attuale lo trovi su Amazon.</span></div>
+    <a class="btn btn-hot mag go" href="${affLink(p)}" ${linkAttrs}>Vedi il prezzo su Amazon <span class="arr">→</span></a>
+    <p class="note">Link affiliato: per te il prezzo non cambia.</p>`;
+    return showDrawer();
+  }
   const verdict = ex
     ? `<div class="verdict meh">${icon('info')}<span><b>Offerta terminata.</b> Il prezzo su Amazon potrebbe essere tornato più alto: controllalo prima di acquistare.</span></div>`
     : p.ref && p.price < p.ref
@@ -405,6 +420,9 @@ function openDrawer(id){
     </div>
     <a class="btn btn-hot mag go" href="${affLink(p)}" ${linkAttrs}>Vai all'offerta su Amazon <span class="arr">→</span></a>
     <p class="note">Prezzo controllato su Amazon.it ${whenChecked(p.checked)}. Prezzi e disponibilità possono cambiare: vale quello mostrato su Amazon al momento dell'acquisto. Link affiliato: per te il prezzo non cambia.</p>`;
+  showDrawer();
+}
+function showDrawer(){
   lastFocus = document.activeElement;
   drawer.hidden = false; backdrop.hidden = false; drawer.scrollTop = 0;
   requestAnimationFrame(()=>requestAnimationFrame(()=>{ drawer.classList.add('open'); backdrop.classList.add('open'); }));
