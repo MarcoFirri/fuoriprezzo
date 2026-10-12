@@ -221,8 +221,13 @@ function home(){
   <section class="wrap sec">
     <div class="sec-head"><div><h2>Sfoglia per categoria</h2><p>Nuove offerte ogni giorno in tutte le categorie.</p></div></div>
     ${catTiles()}
-  </section>` + howSection();
+  </section>` + tgBand() + howSection();
 }
+const TG = 'https://t.me/fuoriprezzo3';
+const tgBand = () => `<section class="wrap sec"><div class="tg-band">
+  <div><h2>Le offerte arrivano prima su Telegram</h2><p>Iscriviti al canale: ogni nuova offerta e la scelta del giorno ti arrivano sul telefono appena le pubblichiamo.</p></div>
+  <a class="btn tg-btn mag" href="${TG}" target="_blank" rel="noopener"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.4 3.6 2.9 10.7c-1.3.5-1.2 1.3-.2 1.6l4.7 1.5 1.8 5.6c.2.7.4.9.9.9.4 0 .6-.2.9-.5l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.6c.3-1.3-.5-1.9-1.4-1.5Z"/></svg>Unisciti al canale <span class="arr">→</span></a>
+</div></section>`;
 
 const view = {sort:'sconto'};
 const toolbar = () => `<div class="toolbar"><label for="sort">Ordina per
