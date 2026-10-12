@@ -1,9 +1,8 @@
 name: Pubblica su Instagram
 
 on:
-  push:
-    branches: [main]
-    paths: ['data/offerte.js']
+  # Pubblicazione automatica in pausa: Instagram ha limitato l'account fino all'11 novembre 2026.
+  # Per riattivarla, rimettere qui sotto il blocco push su data/offerte.js.
   schedule:
     # Rinnovo del token il 1° di ogni mese
     - cron: '17 6 1 * *'
