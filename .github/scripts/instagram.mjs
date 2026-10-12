@@ -53,10 +53,9 @@ let toPost;
 if (FORCE) toPost = now.offers.filter(o => FORCE === 'tutte' || o.asin === FORCE);
 else {
   const before = new Set(prev.offers.map(o => o.asin));
-  toPost = now.offers.filter(o => !before.has(o.asin));
-  if (pick && pick !== prev.cfg.sceltaDelGiorno && !toPost.some(o => o.asin === pick)) {
-    const o = now.offers.find(o => o.asin === pick); if (o) toPost.unshift(o);
-  }
+  // Modalità prudente: su Instagram va solo la scelta del giorno, quando è nuova o cambia
+  const changed = pick && (pick !== prev.cfg.sceltaDelGiorno || !before.has(pick));
+  toPost = changed ? now.offers.filter(o => o.asin === pick) : [];
 }
 toPost = toPost.filter(o => fresh(o) && fs.existsSync(`img/${o.asin}-ig.jpg`));
 if (!toPost.length) { console.log('Nessuna offerta nuova da pubblicare su Instagram.'); process.exit(0); }
@@ -81,7 +80,7 @@ function caption(o){
   if (ref && o.tipoRiferimento) L.push(`ℹ️ ${eur(ref)} è il ${o.tipoRiferimento}`);
   if (o.scadenza) { const s = new Date(o.scadenza); L.push(`⏳ L'offerta termina il ${giorno(s)} alle ${ora(s)}`); }
   if (o.valutazione) L.push(`⭐️ ${String(o.valutazione).replace('.', ',')}/5${o.recensioni ? ` su ${o.recensioni} recensioni` : ''}`);
-  L.push('', '👉 Trovi il link all\'offerta su fuoriprezzo.it: link in bio!', '');
+  L.push('', '👉 Trovi l\'offerta col link in bio!', '');
   const c = new Date(o.controllato);
   L.push(`Prezzo verificato su Amazon.it il ${giorno(c)} alle ${ora(c)}: può cambiare in qualsiasi momento. #pubblicità Link affiliato Amazon: per te il prezzo non cambia.`, '');
   L.push(`#offerte #offerteamazon #amazon #sconti #risparmio #minimostorico #fuoriprezzo ${TAGS[o.categoria] || ''}`.trim());
@@ -103,6 +102,12 @@ for (const o of toPost) {
     }
     if (!ok) throw new Error(`immagine non raggiungibile: ${url}`);
     const me = await ig('me', { fields: 'user_id' });
+    // Al massimo un post ogni 20 ore
+    if (!FORCE) {
+      const last = await ig(`${me.user_id}/media`, { fields: 'timestamp', limit: '1' });
+      const t = last.data?.[0]?.timestamp;
+      if (t && Date.now() - new Date(t) < 20 * 3600e3) { console.log('Ultimo post meno di 20 ore fa: salto.'); continue; }
+    }
     const box = await ig(`${me.user_id}/media`, { image_url: url, caption: caption(o) }, 'POST');
     for (let i = 0; i < 20; i++) {
       const st = await ig(box.id, { fields: 'status_code' });
