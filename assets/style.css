@@ -275,3 +275,10 @@ footer{background:var(--foot-bg);color:var(--foot-fg);margin-top:clamp(40px,6vw,
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
+
+/* Illustrazioni dei prodotti */
+.pimg{display:block;height:auto;max-width:100%;filter:drop-shadow(0 14px 16px rgba(23,17,42,.22));transition:transform .55s cubic-bezier(.3,1.5,.5,1)}
+.card-media .pimg{width:74%}
+.card:hover .card-media .pimg{transform:scale(1.07) rotate(-3deg)}
+.visual-icon .pimg{width:66%;animation:bob 5s ease-in-out infinite}
+.d-media .pimg{width:52%;animation:bob 5s ease-in-out infinite}

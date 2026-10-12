@@ -4,6 +4,7 @@
   - prezzoRiferimento: il prezzo di confronto mostrato da Amazon (es. "Prezzo più basso ultimi 30gg")
   - storico: i prezzi registrati da noi giorno per giorno; il grafico compare da 5 rilevazioni in su
   - scadenza: per le offerte a tempo, quando terminano
+  - illustrazione: immagine del prodotto disegnata per il sito (cartella img)
   - icona: disegno mostrato al posto della foto (headphones, laptop, house, pot, dumbbell, gamepad, bottle, wrench, camera)
 */
 window.FP_CONFIG = {
@@ -16,6 +17,7 @@ window.FP_OFFERTE = [
     asin: 'B0GZQS8P6D',
     categoria: 'elettronica',
     icona: 'camera',
+    illustrazione: 'img/B0GZQS8P6D.svg',
     titolo: 'Videocamera esterna 2K+ Blink con Videocitofono 2K+ a pile Blink (ultimo modello), Nero, Modulo di sincronizzazione di base incluso',
     titoloBreve: 'Videocamera esterna Blink 2K+ con Videocitofono 2K+',
     prezzo: 107.99,

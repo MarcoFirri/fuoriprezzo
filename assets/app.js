@@ -36,6 +36,7 @@ const ICONS = {
   star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>'
 };
 const icon = (n, cls='') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
+const media = (p, cls='pi') => p.img ? `<img class="pimg" src="${esc(p.img)}" alt="" loading="lazy">` : icon(p.icon, cls);
 const smallIcon = n => icon(n).replace('<svg','<svg width="14" height="14"');
 
 /* ===== Formati ===== */
@@ -67,7 +68,7 @@ const PRODUCTS = (window.FP_OFFERTE || []).map(o=>{
   const ref = o.prezzoRiferimento || null;
   const storico = o.storico || [];
   return {
-    id:o.asin, asin:o.asin, cat:o.categoria, icon:o.icona||'', name:o.titolo, short:o.titoloBreve||o.titolo,
+    id:o.asin, asin:o.asin, cat:o.categoria, icon:o.icona||'', img:o.illustrazione||'', name:o.titolo, short:o.titoloBreve||o.titolo,
     price:o.prezzo, ref, refLabel:o.tipoRiferimento||'prezzo di riferimento', refShort:o.riferimentoBreve||'Prima',
     disc: ref ? Math.round((ref-o.prezzo)/ref*100) : 0,
     badge:o.badge||'', label:o.etichetta||'',
@@ -141,7 +142,7 @@ function card(p){
     : p.ends ? `Termina tra ${leftText(p.ends - new Date())}`
     : p.checked ? `Controllato ${whenChecked(p.checked)}` : '';
   return `<article class="card${np?' expired':''}" data-id="${esc(p.id)}" style="--c:${c.c}" tabindex="0" aria-label="${esc(p.short)}${np?'':`, ${eur(p.price)}`}">
-    <div class="card-media">${icon(p.icon,'pi')}
+    <div class="card-media">${media(p)}
       ${p.disc>0&&!np?`<span class="sticker disc">−${p.disc}%</span>`:''}
       ${p.badge&&!np?`<span class="min-badge">${icon('bolt')}${esc(p.badge)}</span>`:''}
       ${p.label&&!np?`<span class="deal-flag">${esc(p.label)}</span>`:''}
@@ -179,7 +180,7 @@ function hero(p){
     </div>
     <div class="hero-visual" style="--c:${c.c}">
       <div class="blob"></div>
-      <div class="visual-icon">${icon(p.icon)}</div>
+      <div class="visual-icon">${media(p,'')}</div>
       <svg class="badge-rot" viewBox="0 0 120 120" aria-hidden="true">
         <defs><path id="circ" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs>
         <g class="ring-txt"><text><textPath href="#circ" textLength="286">SCELTA DEL GIORNO • SCELTA DEL GIORNO • </textPath></text></g>
@@ -194,7 +195,7 @@ function hero(p){
 function catTiles(){
   return `<div class="cat-grid">${CATS.map(c=>{
     const n = live().filter(p=>p.cat===c.slug).length;
-    return `<a class="cat-tile" href="#cat-${c.slug}" style="--c:${c.c}">${icon(c.icon)}<div><strong>${c.name}</strong><span>${n ? `${n} ${n===1?'offerta':'offerte'} attive` : 'Offerte in arrivo'}</span></div></a>`;
+    return `<a class="cat-tile" href="#cat-${c.slug}" style="--c:${c.c}">${icon(c.icon)}<div><strong>${c.name}</strong><span>${n ? `${n} ${n===1?'offerta attiva':'offerte attive'}` : 'Offerte in arrivo'}</span></div></a>`;
   }).join('')}</div>`;
 }
 const howSection = () => `<section class="wrap sec" id="come-funziona">
@@ -394,7 +395,7 @@ function openDrawer(id){
   document.getElementById('d-cat').textContent = c.name;
   if(np){
     document.getElementById('d-body').innerHTML = `
-    <div class="d-media" style="--c:${c.c}">${icon(p.icon,'pi')}</div>
+    <div class="d-media" style="--c:${c.c}">${media(p)}</div>
     <h2 id="d-title">${esc(p.name)}</h2>
     <div class="verdict meh">${icon('info')}<span><b>${ex?'Offerta terminata.':'Prezzo da verificare.'}</b> Ultimo controllo ${whenChecked(p.checked)}. Il prezzo attuale lo trovi su Amazon.</span></div>
     <a class="btn btn-hot mag go" href="${affLink(p)}" ${linkAttrs}>Vedi il prezzo su Amazon <span class="arr">→</span></a>
@@ -407,7 +408,7 @@ function openDrawer(id){
       ? `<div class="verdict good">${icon('check')}<span><b>Costa ${p.disc}% in meno</b> del ${esc(p.refLabel)} (${eur(p.ref)}). Risparmi ${eur(p.ref-p.price)}.</span></div>`
       : '';
   document.getElementById('d-body').innerHTML = `
-    <div class="d-media" style="--c:${c.c}">${icon(p.icon,'pi')}${p.disc>0?`<span class="sticker disc">−${p.disc}%</span>`:''}${p.label&&!ex?`<span class="deal-flag" style="top:16px;right:16px">${esc(p.label)}</span>`:''}</div>
+    <div class="d-media" style="--c:${c.c}">${media(p)}${p.disc>0?`<span class="sticker disc">−${p.disc}%</span>`:''}${p.label&&!ex?`<span class="deal-flag" style="top:16px;right:16px">${esc(p.label)}</span>`:''}</div>
     <h2 id="d-title">${esc(p.name)}</h2>
     <div class="price-row"><span class="price-big" style="font-size:clamp(40px,8vw,56px)">${eur(p.price)}</span>${p.ref?`<span class="price-side"><span class="was">${eur(p.ref)}</span><small>${esc(p.refLabel)}</small></span>`:''}</div>
     ${verdict}
