@@ -6,10 +6,19 @@ on:
     paths: ['data/offerte.js']
   workflow_dispatch:
     inputs:
+      azione:
+        description: "Cosa fare"
+        type: choice
+        options: [pubblica, foto-canale, aggiungi-pulsanti]
+        default: pubblica
       asin:
-        description: "ASIN dell'offerta da pubblicare, oppure 'tutte'"
-        required: true
+        description: "ASIN dell'offerta, oppure 'tutte'"
+        required: false
         default: tutte
+      message_id:
+        description: "Numero del messaggio (solo per aggiungi-pulsanti)"
+        required: false
+        default: ""
 
 jobs:
   telegram:
@@ -21,9 +30,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Invia le offerte nuove al canale
+      - name: Invia al canale
         run: node .github/scripts/telegram.mjs
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          AZIONE: ${{ github.event.inputs.azione }}
           FORCE_ASIN: ${{ github.event.inputs.asin }}
+          MESSAGE_ID: ${{ github.event.inputs.message_id }}
