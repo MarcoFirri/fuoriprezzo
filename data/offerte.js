@@ -27,7 +27,7 @@ window.FP_OFFERTE = [
     badge: 'Minimo 30 giorni',
     etichetta: 'Offerta lampo',
     scadenza: '2026-10-12T23:59:00+02:00',
-    controllato: '2026-10-12T16:51:00+02:00',
+    controllato: '2026-10-12T18:11:00+02:00',
     valutazione: 4.6,
     recensioni: 12,
     storico: [
