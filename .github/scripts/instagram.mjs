@@ -29,7 +29,7 @@ async function ig(path, params = {}, method = 'GET'){
 }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-if (!DRY && !TOKEN) { console.log('Instagram non ancora configurato (manca il secret INSTAGRAM_TOKEN).'); process.exit(0); }
+if (!DRY && !TOKEN) { console.log('Instagram non ancora configurato (manca il secret INSTAGRAM_TOKEN).'); process.exit(ACTION === 'pubblica' && !FORCE ? 0 : 1); }
 
 if (ACTION === 'verifica') {
   const me = await ig('me', { fields: 'user_id,username' });
