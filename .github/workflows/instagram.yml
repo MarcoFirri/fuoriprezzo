@@ -1,0 +1,37 @@
+name: Pubblica su Instagram
+
+on:
+  push:
+    branches: [main]
+    paths: ['data/offerte.js']
+  schedule:
+    # Rinnovo del token il 1° di ogni mese
+    - cron: '17 6 1 * *'
+  workflow_dispatch:
+    inputs:
+      azione:
+        description: "Cosa fare"
+        type: choice
+        options: [verifica, pubblica, rinnova-token]
+        default: verifica
+      asin:
+        description: "ASIN dell'offerta da pubblicare, oppure 'tutte'"
+        required: false
+        default: ""
+
+jobs:
+  instagram:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Instagram
+        run: node .github/scripts/instagram.mjs
+        env:
+          INSTAGRAM_TOKEN: ${{ secrets.INSTAGRAM_TOKEN }}
+          AZIONE: ${{ github.event_name == 'schedule' && 'rinnova-token' || github.event.inputs.azione || 'pubblica' }}
+          FORCE_ASIN: ${{ github.event.inputs.asin }}
