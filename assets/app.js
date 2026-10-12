@@ -5,7 +5,7 @@
 const CFG = window.FP_CONFIG || {};
 const TAG = CFG.tag || '';
 const CATS = [
-  {slug:'elettronica', name:'Elettronica', c:'#FF7AA2', icon:'headphones'},
+  {slug:'elettronica', name:'Elettronica', c:'#FF6A4D', icon:'headphones'},
   {slug:'informatica', name:'Informatica', c:'#9C8CFF', icon:'laptop'},
   {slug:'casa',        name:'Casa',        c:'#FFC93D', icon:'house'},
   {slug:'cucina',      name:'Cucina',      c:'#FF9356', icon:'pot'},

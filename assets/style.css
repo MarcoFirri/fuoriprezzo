@@ -1,7 +1,7 @@
 /* Layout: ticker di offerte + header sticky con categorie, hero "Scelta del giorno" a due colonne, griglie prodotto, pannello laterale con lo storico prezzi */
 :root{
   --bg:#F7F5FC; --surface:#FFFFFF; --ink:#17112A; --muted:#675F7E; --line:#E4DEF1;
-  --hot:#FF2D6F; --hot-soft:#FFE2EC; --sun:#FFD43B; --mint:#00B596;
+  --hot:#E41E26; --hot-soft:#FFE3E1; --sun:#FFD43B; --mint:#00B596;
   --on-hot:#FFFFFF; --on-sun:#17112A;
   --foot-bg:#17112A; --foot-fg:#F4F0FF; --foot-muted:#A79FBF; --foot-line:#2E2642;
   --font-display:'Bricolage Grotesque','Arial Black',system-ui,sans-serif;
@@ -12,14 +12,14 @@
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#110C1C; --surface:#1B1529; --ink:#F4F0FF; --muted:#A99FC2; --line:#2F2744;
-    --hot:#FF4D86; --hot-soft:#3A1630; --sun:#FFD43B; --mint:#26D9B6;
+    --hot:#FF4141; --hot-soft:#3A1416; --sun:#FFD43B; --mint:#26D9B6;
     --foot-bg:#0A0712; --foot-fg:#F4F0FF; --foot-muted:#9E95B8; --foot-line:#241D36;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#110C1C; --surface:#1B1529; --ink:#F4F0FF; --muted:#A99FC2; --line:#2F2744;
-  --hot:#FF4D86; --hot-soft:#3A1630; --sun:#FFD43B; --mint:#26D9B6;
+  --hot:#FF4141; --hot-soft:#3A1416; --sun:#FFD43B; --mint:#26D9B6;
   --foot-bg:#0A0712; --foot-fg:#F4F0FF; --foot-muted:#9E95B8; --foot-line:#241D36;
   color-scheme:dark;
 }
