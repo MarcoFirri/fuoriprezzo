@@ -85,6 +85,8 @@ const DAY = 24*3600*1000;
 const stale = p => !expired(p) && (!p.checked || Date.now() - p.checked > DAY);
 const noPrice = p => expired(p) || stale(p);
 const live = () => PRODUCTS.filter(p=>!noPrice(p));
+// Le offerte terminate non compaiono negli elenchi: resta solo la loro pagina, per chi arriva da un vecchio link
+const active = () => PRODUCTS.filter(p=>!expired(p));
 const affLink = p => `https://www.amazon.it/dp/${encodeURIComponent(p.asin)}${TAG?`?tag=${encodeURIComponent(TAG)}`:''}`;
 const linkAttrs = 'target="_blank" rel="nofollow sponsored noopener"';
 function dealOfDay(){
@@ -211,7 +213,7 @@ const howSection = () => `<section class="wrap sec" id="come-funziona">
 
 function home(){
   const pick = dealOfDay();
-  const list = sortList(PRODUCTS, 'sconto');
+  const list = sortList(active(), 'sconto');
   const top = pick ? hero(pick) : `<section class="wrap prose"><h1>La nuova scelta del giorno arriva a breve</h1><p>Stiamo ricontrollando i prezzi su Amazon.it. Intanto guarda le offerte qui sotto.</p></section>`;
   return top + (list.length ? `
   <section class="wrap sec">
@@ -232,7 +234,7 @@ const tgBand = () => `<section class="wrap sec"><div class="tg-band">
 const view = {sort:'sconto'};
 const toolbar = () => `<div class="toolbar"><label for="sort">Ordina per
   <select id="sort"><option value="sconto">Sconto più alto</option><option value="risparmio">Risparmio in euro</option><option value="prezzo">Prezzo più basso</option></select></label></div>`;
-function scopeList(scope){ return scope==='offerte' ? PRODUCTS : PRODUCTS.filter(p=>p.cat===scope); }
+function scopeList(scope){ return scope==='offerte' ? active() : active().filter(p=>p.cat===scope); }
 function listGrid(scope){
   const l = sortList(scopeList(scope), view.sort);
   if(l.length) return `<div class="grid">${l.map(card).join('')}</div>`;
@@ -241,7 +243,7 @@ function listGrid(scope){
 }
 function listPage(scope){
   const c = CAT[scope];
-  const n = scopeList(scope).filter(p=>!expired(p)).length;
+  const n = scopeList(scope).length;
   const title = c ? c.name : 'Tutte le offerte';
   const head = c ? `<div class="ph-ic">${icon(c.icon)}</div>` : `<div class="ph-ic">${icon('bolt')}</div>`;
   return `<section class="wrap">
@@ -251,7 +253,7 @@ function listPage(scope){
 }
 function searchPage(q){
   const t = q.toLowerCase();
-  const list = PRODUCTS.filter(p=>p.name.toLowerCase().includes(t) || CAT[p.cat].name.toLowerCase().includes(t));
+  const list = active().filter(p=>p.name.toLowerCase().includes(t) || CAT[p.cat].name.toLowerCase().includes(t));
   return `<section class="wrap">
     <div class="page-head"><div><h1>Risultati per “${esc(q)}”</h1><p>${list.length} ${list.length===1?'prodotto trovato':'prodotti trovati'}</p></div></div>
     ${list.length?`<div class="grid">${sortList(list,'sconto').map(card).join('')}</div>`:`<div class="empty">Nessuna offerta trovata. Prova con un'altra parola o <a href="#offerte">guarda tutte le offerte</a>.</div>`}
