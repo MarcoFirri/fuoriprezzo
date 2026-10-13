@@ -3,6 +3,9 @@ name: Insight Instagram
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   insights:
     runs-on: ubuntu-latest
@@ -15,9 +18,21 @@ jobs:
         run: node .github/scripts/instagram-insights.mjs
         env:
           INSTAGRAM_TOKEN: ${{ secrets.INSTAGRAM_TOKEN }}
-      - uses: actions/upload-artifact@v4
+      - name: Cifra il resoconto e salvalo nel ramo report
         if: always()
-        with:
-          name: insights
-          path: insights.json
-          retention-days: 3
+        run: |
+          set -e
+          [ -f insights.json ] || exit 0
+          openssl rand -hex 32 > k.txt
+          openssl enc -aes-256-cbc -pbkdf2 -salt -in insights.json -out insights.json.enc -pass file:k.txt
+          openssl pkeyutl -encrypt -pubin -inkey .github/keys/report_public.pem -in k.txt -out insights.key.enc
+          rm -f k.txt insights.json
+          mkdir -p /tmp/out && mv insights.json.enc insights.key.enc /tmp/out/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin report || true
+          if git rev-parse --verify origin/report >/dev/null 2>&1; then git checkout -B report origin/report; else git checkout --orphan report; git rm -rf . >/dev/null; fi
+          cp /tmp/out/* .
+          git add insights.json.enc insights.key.enc
+          git commit -m "Insight Instagram cifrati $(date -u +%F)" || exit 0
+          git push origin report
