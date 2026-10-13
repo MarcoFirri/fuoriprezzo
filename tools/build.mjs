@@ -168,7 +168,7 @@ for (const c of CATS) {
   const body = `<section class="wrap">
   <div class="page-head" style="--c:${c.colore}"><div><h1>Offerte ${esc(c.nome)}</h1><p>${live.length ? `${live.length} ${live.length === 1 ? 'offerta attiva' : 'offerte attive'}` : 'Nuove offerte in arrivo'}</p></div></div>
   <div class="prose" style="padding-block:0 18px">${c.testo.map(p => `<p>${esc(p)}</p>`).join('')}</div>
-  ${list.length ? `<div class="grid">${list.map(staticCard).join('')}</div>` : `<div class="empty">In questo momento non ci sono offerte ${esc(c.nome.toLowerCase())} verificate. Iscriviti al <a href="${TG}" target="_blank" rel="noopener">canale Telegram</a> per ricevere le prossime appena escono.</div>`}
+  ${live.length ? `<div class="grid">${live.map(staticCard).join('')}</div>` : `<div class="empty">In questo momento non ci sono offerte ${esc(c.nome.toLowerCase())} verificate. Iscriviti al <a href="${TG}" target="_blank" rel="noopener">canale Telegram</a> per ricevere le prossime appena escono.</div>`}
 </section>`;
   fs.mkdirSync(`categoria/${c.slug}`, { recursive: true });
   fs.writeFileSync(`categoria/${c.slug}/index.html`, shell({
