@@ -22,6 +22,7 @@ Scrivi a Marco sempre in **italiano semplice**: non è un tecnico.
 | `tools/render_post.py ASIN` | Crea le immagini social: `img/<ASIN>.png` (Telegram) e `img/<ASIN>-ig.jpg` (Instagram). Richiede `img/<ASIN>.svg`. |
 | `tools/render_reel.py ASIN` | Crea il reel `img/<ASIN>-reel.mp4` (12 secondi, senza musica) e la storia `img/<ASIN>-story.jpg`. Richiede `img/<ASIN>.svg` e ffmpeg. |
 | `data/instagram-strategia.json` | Strategia Instagram (formato, orari, prima riga delle didascalie, storie al giorno). La aggiorna da sola ogni mattina il workflow `instagram-strategia.yml`. |
+| `favicon.svg` | Icona del sito (etichetta rossa). Dopo averla cambiata: `python3 tools/render_favicon.py` rigenera `favicon.ico`, `favicon-96.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`. |
 | `img/<ASIN>.svg` | Illustrazione del prodotto disegnata da noi. |
 | `assets/app.js`, `assets/style.css` | Sito interattivo (home, ricerca, schede). |
 | `.github/workflows/` | `telegram.yml`, `instagram.yml` (ogni ora decide se pubblicare), `instagram-strategia.yml` (ogni mattina), `instagram-insights.yml`. |
