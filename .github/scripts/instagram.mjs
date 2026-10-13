@@ -78,6 +78,7 @@ function caption(o){
   L.push(o.titoloBreve || o.titolo, '');
   L.push(ref && disc > 0 ? `💶 ${eur(o.prezzo)} invece di ${eur(ref)} (−${disc}%)` : `💶 ${eur(o.prezzo)}`);
   if (ref && o.tipoRiferimento) L.push(`ℹ️ ${eur(ref)} è il ${o.tipoRiferimento}`);
+  if (o.nota) L.push(`📉 ${o.nota}`);
   if (o.scadenza) { const s = new Date(o.scadenza); L.push(`⏳ L'offerta termina il ${giorno(s)} alle ${ora(s)}`); }
   if (o.valutazione) L.push(`⭐️ ${String(o.valutazione).replace('.', ',')}/5${o.recensioni ? ` su ${o.recensioni} recensioni` : ''}`);
   L.push('', '👉 Trovi l\'offerta col link in bio!', '');
@@ -106,7 +107,7 @@ for (const o of toPost) {
     if (!FORCE) {
       const last = await ig(`${me.user_id}/media`, { fields: 'timestamp', limit: '1' });
       const t = last.data?.[0]?.timestamp;
-      if (t && Date.now() - new Date(t) < 20 * 3600e3) { console.log('Ultimo post meno di 20 ore fa: salto.'); continue; }
+      if (t && Date.now() - new Date(t) < 12 * 3600e3) { console.log('Ultimo post meno di 12 ore fa: salto.'); continue; }
     }
     const box = await ig(`${me.user_id}/media`, { image_url: url, caption: caption(o) }, 'POST');
     for (let i = 0; i < 20; i++) {

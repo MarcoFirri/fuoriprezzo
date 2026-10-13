@@ -58,6 +58,7 @@ function message(o){
     ? `💶 <b>${eur(o.prezzo)}</b> invece di <s>${eur(ref)}</s>  (−${disc}%)`
     : `💶 <b>${eur(o.prezzo)}</b>`);
   if (ref && o.tipoRiferimento) lines.push(`ℹ️ ${eur(ref)} è il ${esc(o.tipoRiferimento)}`);
+  if (o.nota) lines.push(`📉 ${esc(o.nota)}`);
   if (o.scadenza) {
     const s = new Date(o.scadenza);
     lines.push(`⏳ Termina ${isToday(s) ? 'oggi' : 'il ' + giorno(s)} alle ${ora(s)}`);

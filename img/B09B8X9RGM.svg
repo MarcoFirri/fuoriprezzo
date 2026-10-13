@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 320">
+  <defs>
+    <radialGradient id="sph" cx=".36" cy=".3" r=".78">
+      <stop offset="0" stop-color="#5A5663"/>
+      <stop offset=".45" stop-color="#2C2833"/>
+      <stop offset="1" stop-color="#0E0C12"/>
+    </radialGradient>
+    <pattern id="mesh" width="6" height="6" patternUnits="userSpaceOnUse">
+      <circle cx="3" cy="3" r="1.05" fill="#000" opacity=".28"/>
+    </pattern>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1FA2FF" stop-opacity=".2"/>
+      <stop offset=".5" stop-color="#5FD3FF"/>
+      <stop offset="1" stop-color="#1FA2FF" stop-opacity=".2"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#5FD3FF" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#5FD3FF" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="ball"><circle cx="200" cy="158" r="112"/></clipPath>
+  </defs>
+
+  <ellipse cx="200" cy="292" rx="118" ry="14" fill="#17112A" opacity=".24"/>
+  <ellipse cx="200" cy="262" rx="140" ry="22" fill="url(#glow)"/>
+
+  <!-- sfera -->
+  <circle cx="200" cy="158" r="112" fill="url(#sph)"/>
+  <circle cx="200" cy="158" r="112" fill="url(#mesh)" clip-path="url(#ball)"/>
+  <!-- base piatta -->
+  <path d="M120 236c22 20 52 32 80 32s58-12 80-32" fill="#0C0A10"/>
+  <!-- anello luminoso -->
+  <path d="M120 236c22 20 52 32 80 32s58-12 80-32" fill="none" stroke="url(#ring)" stroke-width="7" stroke-linecap="round"/>
+  <path d="M138 248c18 11 40 17 62 17s44-6 62-17" fill="none" stroke="#9BE6FF" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+  <!-- tasti -->
+  <g fill="none" stroke="#6C6775" stroke-width="3" stroke-linecap="round">
+    <circle cx="200" cy="64" r="9"/>
+    <path d="M166 74h12M222 74h12M228 68v12"/>
+  </g>
+  <!-- riflesso -->
+  <path d="M128 112c14-32 44-52 78-56" fill="none" stroke="#FFFFFF" stroke-opacity=".22" stroke-width="10" stroke-linecap="round"/>
+  <ellipse cx="146" cy="104" rx="10" ry="6" fill="#FFFFFF" opacity=".28" transform="rotate(-40 146 104)"/>
+</svg>

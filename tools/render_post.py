@@ -40,11 +40,12 @@ ig = f"""<html><head><style>{BASE}
 .t{{font-weight:800;font-size:46px;line-height:1.08;letter-spacing:-.03em;max-width:820px}}
 .pr{{display:flex;align-items:flex-end;gap:26px;margin-top:6px}} .now{{font-weight:900;font-size:120px;line-height:.85;letter-spacing:-.05em;color:#FF4141}}
 .was{{font-size:44px;color:#A99FC2;text-decoration:line-through;text-decoration-color:#FF4141;text-decoration-thickness:4px;padding-bottom:6px}}
-.ref{{font-size:26px;color:#A99FC2}} .foot{{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font-size:26px;color:#A99FC2;border-top:2px dashed #2F2744;padding-top:22px}} .foot b{{color:#FFD43B}}
+.ref{{font-size:26px;color:#A99FC2}} .nota{{font-size:30px;font-weight:700;color:#FFD43B;line-height:1.25;max-width:900px}} .foot{{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font-size:26px;color:#A99FC2;border-top:2px dashed #2F2744;padding-top:22px}} .foot b{{color:#FFD43B}}
 </style></head><body><div class="p"><div class="top bg"><div class="ill">{ill}</div>{BRAND}{f'<div class="flag">{o["etichetta"]}</div>' if o.get('etichetta') else ''}</div>{f'<div class="sticker">−{disc}%</div>' if disc>0 else ''}
 <div class="bot"><div class="t">{o.get('titoloBreve') or o['titolo']}</div>
 <div class="pr"><span class="now">{eur(o['prezzo'])}</span>{f'<span class="was">{eur(ref)}</span>' if ref else ''}</div>
 {f'<div class="ref">{eur(ref)} = {o.get("tipoRiferimento","prezzo di riferimento")}</div>' if ref else ''}
+{f'<div class="nota">📉 {o["nota"]}</div>' if o.get('nota') else ''}
 <div class="foot"><span>Prezzo verificato il {when}</span><b>Link in bio →</b></div></div></div></body></html>"""
 
 with sync_playwright() as p:

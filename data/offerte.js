@@ -5,14 +5,35 @@
   - storico: i prezzi registrati da noi giorno per giorno; il grafico compare da 5 rilevazioni in su
   - scadenza: per le offerte a tempo, quando terminano
   - illustrazione: immagine del prodotto disegnata per il sito (cartella img)
+  - nota: frase in più mostrata nei post e nella scheda (es. confronto con lo storico prezzi di Amazon)
   - icona: disegno mostrato al posto della foto (headphones, laptop, house, pot, dumbbell, gamepad, bottle, wrench, camera)
 */
 window.FP_CONFIG = {
   tag: 'marcofirri-21',
-  sceltaDelGiorno: 'B0GZQS8P6D'
+  sceltaDelGiorno: 'B09B8X9RGM'
 };
 
 window.FP_OFFERTE = [
+  {
+    asin: 'B09B8X9RGM',
+    categoria: 'elettronica',
+    icona: 'headphones',
+    illustrazione: 'img/B09B8X9RGM.svg',
+    titolo: 'Echo Dot (Ultimo modello) | Altoparlante intelligente Wi-Fi e Bluetooth, suono più potente e dinamico | Antracite, con Accesso Anticipato ad Alexa+',
+    titoloBreve: 'Echo Dot (5ª gen.), altoparlante intelligente con Alexa',
+    prezzo: 29.99,
+    prezzoRiferimento: 89.99,
+    tipoRiferimento: 'prezzo consigliato indicato da Amazon',
+    riferimentoBreve: 'Consigliato',
+    badge: 'Minimo 12 mesi',
+    nota: 'È il prezzo più basso degli ultimi 12 mesi su Amazon (di solito costa circa 65 €)',
+    controllato: '2026-10-13T08:31:00+02:00',
+    valutazione: 4.6,
+    recensioni: 193392,
+    storico: [
+      { data: '2026-10-13', prezzo: 29.99 }
+    ]
+  },
   {
     asin: 'B0GZQS8P6D',
     categoria: 'elettronica',

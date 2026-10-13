@@ -1,7 +1,7 @@
 name: Pubblica su Instagram
 
 on:
-  # Modalità prudente: solo la scelta del giorno, al massimo un post ogni 20 ore
+  # Modalità prudente: solo la scelta del giorno, al massimo un post ogni 12 ore
   push:
     branches: [main]
     paths: ['data/offerte.js']

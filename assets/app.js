@@ -71,7 +71,7 @@ const PRODUCTS = (window.FP_OFFERTE || []).map(o=>{
     id:o.asin, asin:o.asin, cat:o.categoria, icon:o.icona||'', img:o.illustrazione||'', name:o.titolo, short:o.titoloBreve||o.titolo,
     price:o.prezzo, ref, refLabel:o.tipoRiferimento||'prezzo di riferimento', refShort:o.riferimentoBreve||'Prima',
     disc: ref ? Math.round((ref-o.prezzo)/ref*100) : 0,
-    badge:o.badge||'', label:o.etichetta||'',
+    badge:o.badge||'', label:o.etichetta||'', nota:o.nota||'',
     ends: o.scadenza ? new Date(o.scadenza) : null,
     checked: o.controllato ? new Date(o.controllato) : null,
     rating:o.valutazione||null, reviews:o.recensioni||null,
@@ -203,7 +203,7 @@ const howSection = () => `<section class="wrap sec" id="come-funziona">
     <h2>Come scegliamo le offerte</h2>
     <div class="how-steps">
       <div>${icon('radar')}<h3>Controlliamo i prezzi</h3><p>Ogni giorno verifichiamo su Amazon.it il prezzo dei prodotti in offerta, con data e ora del controllo.</p></div>
-      <div>${icon('chart')}<h3>Li confrontiamo</h3><p>Lo sconto è calcolato sul prezzo più basso degli ultimi 30 giorni indicato da Amazon, non su un prezzo di listino gonfiato.</p></div>
+      <div>${icon('chart')}<h3>Li confrontiamo</h3><p>Guardiamo lo storico prezzi di Amazon e segnaliamo solo i prezzi davvero bassi. Su ogni offerta scriviamo con quale prezzo è calcolato lo sconto.</p></div>
       <div>${icon('star')}<h3>Scegliamo l'affare del giorno</h3><p>Ogni giorno mettiamo in evidenza l'offerta con il risparmio più grande e lo storico più convincente.</p></div>
     </div>
   </div>
@@ -215,7 +215,7 @@ function home(){
   const top = pick ? hero(pick) : `<section class="wrap prose"><h1>La nuova scelta del giorno arriva a breve</h1><p>Stiamo ricontrollando i prezzi su Amazon.it. Intanto guarda le offerte qui sotto.</p></section>`;
   return top + (list.length ? `
   <section class="wrap sec">
-    <div class="sec-head"><div><h2>Le offerte di oggi</h2><p>Prezzi controllati su Amazon.it, con lo sconto calcolato sul prezzo più basso degli ultimi 30 giorni.</p></div><a class="link-more" href="#offerte">Vedi tutte <span class="arr">→</span></a></div>
+    <div class="sec-head"><div><h2>Le offerte di oggi</h2><p>Prezzi controllati su Amazon.it. Su ogni offerta trovi il prezzo con cui è calcolato lo sconto.</p></div><a class="link-more" href="#offerte">Vedi tutte <span class="arr">→</span></a></div>
     <div class="grid">${list.slice(0,8).map(card).join('')}</div>
   </section>` : '') + `
   <section class="wrap sec">
@@ -279,7 +279,7 @@ document.getElementById('foot-cats').innerHTML = CATS.map(c=>`<li><a href="#cat-
 document.getElementById('year').textContent = new Date().getFullYear();
 (function ticker(){
   const deals = sortList(live(),'sconto').slice(0,10).map(p=>`<a href="${affLink(p)}" ${linkAttrs}><b>−${p.disc}%</b>${esc(p.short)} · ${eur(p.price)}</a>`);
-  const msgs = ['Prezzi controllati ogni giorno su Amazon.it','Sconti calcolati sul prezzo più basso degli ultimi 30 giorni','Una nuova scelta del giorno ogni giorno'].map(m=>`<span>${smallIcon('bolt')}${m}</span>`);
+  const msgs = ['Prezzi controllati ogni giorno su Amazon.it','Solo prezzi verificati sullo storico di Amazon','Una nuova scelta del giorno ogni giorno'].map(m=>`<span>${smallIcon('bolt')}${m}</span>`);
   let items = [];
   deals.forEach((d,i)=>{ items.push(d); if(msgs[i]) items.push(msgs[i]); });
   msgs.slice(deals.length).forEach(m=>items.push(m));
@@ -410,7 +410,7 @@ function openDrawer(id){
   const verdict = ex
     ? `<div class="verdict meh">${icon('info')}<span><b>Offerta terminata.</b> Il prezzo su Amazon potrebbe essere tornato più alto: controllalo prima di acquistare.</span></div>`
     : p.ref && p.price < p.ref
-      ? `<div class="verdict good">${icon('check')}<span><b>Costa ${p.disc}% in meno</b> del ${esc(p.refLabel)} (${eur(p.ref)}). Risparmi ${eur(p.ref-p.price)}.</span></div>`
+      ? `<div class="verdict good">${icon('check')}<span><b>Costa ${p.disc}% in meno</b> del ${esc(p.refLabel)} (${eur(p.ref)}). Risparmi ${eur(p.ref-p.price)}.${p.nota?` ${esc(p.nota)}.`:''}</span></div>`
       : '';
   document.getElementById('d-body').innerHTML = `
     <div class="d-media" style="--c:${c.c}">${media(p)}${p.disc>0?`<span class="sticker disc">−${p.disc}%</span>`:''}${p.label&&!ex?`<span class="deal-flag" style="top:16px;right:16px">${esc(p.label)}</span>`:''}</div>
