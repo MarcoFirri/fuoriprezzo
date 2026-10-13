@@ -2,10 +2,11 @@
 // Non chiama Instagram: riceve i dati e restituisce una decisione, così si può provare senza pubblicare.
 // La strategia (data/instagram-strategia.json) cambia ogni giorno in base ai risultati; i LIMITI qui sotto no.
 
-// Limitazione dell'account fino all'11/11/2026: solo la scelta del giorno, un contenuto ogni 12 ore, niente storie.
+// Limitazione dell'account fino all'11/11/2026: solo la scelta del giorno, un contenuto ogni 12 ore,
+// al massimo una storia al giorno (storie attive da subito: deciso da Marco il 13/10/2026).
 export const FINE_PRUDENZA = new Date('2026-11-12T00:00:00+01:00');
 const LIMITI = {
-  prudente: { postAlGiorno: 1, distanzaOre: 12, storieAlGiorno: 0 },
+  prudente: { postAlGiorno: 1, distanzaOre: 12, storieAlGiorno: 1 },
   normale: { postAlGiorno: 2, distanzaOre: 6, storieAlGiorno: 3 }
 };
 const SILENZIO = [0, 7]; // dalle 0 alle 7:59 non si pubblica
@@ -103,7 +104,7 @@ export function decidi({ now, offerte, cfg, strategia, recenti, storie, file }){
 
   // --- Storie (solo dopo la fine della prudenza) ---
   const maxStorie = Math.min(L.storieAlGiorno, clamp(strategia.storieAlGiorno | 0, 0, 3));
-  if (!maxStorie) { if (prudente) out.motivi.push('Storie ferme fino al 12 novembre.'); return out; }
+  if (!maxStorie) return out;
   const ultimaStoria = storie.map(s => new Date(s.timestamp)).sort((a, b) => b - a)[0];
   const storieOggi = storie.length;
   if (storieOggi >= maxStorie) return out;

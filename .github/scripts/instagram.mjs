@@ -3,7 +3,7 @@
 // Gira su GitHub Actions (a ogni modifica delle offerte e ogni ora). Azioni: pubblica (default), verifica, rinnova-token.
 import vm from 'node:vm';
 import fs from 'node:fs';
-import { decidi, leggiStrategia, sconto, FINE_PRUDENZA } from './instagram-piano.mjs';
+import { decidi, leggiStrategia, sconto } from './instagram-piano.mjs';
 
 const TOKEN = process.env.INSTAGRAM_TOKEN || '';
 const ACTION = (process.env.AZIONE || 'pubblica').trim();
@@ -147,8 +147,8 @@ if (process.env.SIMULA || (DRY && !TOKEN)) ({ recenti = [], storie = [] } = JSON
 else {
   me = await ig('me', { fields: 'user_id' });
   recenti = (await ig(`${me.user_id}/media`, { fields: 'id,caption,timestamp,media_product_type', limit: '25' })).data || [];
-  // Le storie servono solo dopo la fine della prudenza; se Instagram non le restituisce, nessuna storia
-  if (Date.now() >= FINE_PRUDENZA) {
+  // Se Instagram non restituisce le storie delle ultime 24 ore, per prudenza oggi nessuna storia
+  {
     try { storie = (await ig(`${me.user_id}/stories`, { fields: 'id,timestamp' })).data || []; }
     catch (e) { console.log(`Storie non leggibili (${e.message}): oggi niente storie.`); storie = Array(9).fill({ timestamp: new Date().toISOString() }); }
   }
@@ -171,7 +171,7 @@ if (d.feed) {
     }
   }
 }
-if (d.storia && !d.prudente) {
+if (d.storia) {
   try { await pubblicaStoria(me.user_id, byAsin(d.storia)); }
   catch (e) { failed = true; console.error(`Errore nella storia di ${d.storia}: ${e.message}`); }
 }
