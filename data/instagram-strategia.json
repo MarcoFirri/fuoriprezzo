@@ -1,11 +1,26 @@
 {
   "nota": "Strategia Instagram: la aggiorna ogni giorno .github/scripts/instagram-strategia.mjs in base ai risultati. I limiti di sicurezza sono fissi in .github/scripts/instagram-piano.mjs.",
   "aggiornata": "2026-10-13",
-  "formati": { "reel": 0.5, "foto": 0.5 },
-  "aperture": { "scelta": 0.34, "prezzo": 0.33, "nota": 0.33 },
-  "orari": { "13": 0.4, "19": 0.4, "21": 0.2 },
+  "formati": {
+    "reel": 0.5,
+    "foto": 0.5
+  },
+  "aperture": {
+    "scelta": 0.34,
+    "prezzo": 0.33,
+    "nota": 0.33
+  },
+  "orari": {
+    "9": 0.2,
+    "13": 0.4,
+    "19": 0.4
+  },
   "postAlGiorno": 1,
   "storieAlGiorno": 1,
   "orarioStoriaRicordo": 20,
-  "motivi": ["Punto di partenza: ancora nessun dato, provo reel e foto a metà e tre orari diversi."]
+  "motivi": [
+    "Formati: servono almeno 3 reel e 3 foto per decidere (ora 0 e 0).",
+    "Didascalie: ancora poche prove per ogni tipo di prima riga.",
+    "Orari: ancora pochi dati, uso le 13 e le 19 e provo le 9."
+  ]
 }
