@@ -425,6 +425,7 @@ function openDrawer(id){
       ${p.rating?`<div class="stat"><small>Valutazione</small><b>${String(p.rating).replace('.',',')}<span style="font-size:15px;color:var(--muted)"> / 5</span></b></div>`:''}
     </div>
     <a class="btn btn-hot mag go" href="${affLink(p)}" ${linkAttrs}>Vai all'offerta su Amazon <span class="arr">→</span></a>
+    <a class="d-link" href="/offerta/${esc(p.asin.toLowerCase())}/">Apri la pagina dell'offerta</a>
     <p class="note">Prezzo controllato su Amazon.it ${whenChecked(p.checked)}. Prezzi e disponibilità possono cambiare: vale quello mostrato su Amazon al momento dell'acquisto. Link affiliato: per te il prezzo non cambia.</p>`;
   showDrawer();
 }

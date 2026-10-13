@@ -290,3 +290,14 @@ footer{background:var(--foot-bg);color:var(--foot-fg);margin-top:clamp(40px,6vw,
 .tg-band h2{font-family:var(--font-display);font-weight:800;font-size:clamp(24px,3vw,34px);letter-spacing:-.03em;line-height:1.05;margin:0 0 8px;text-wrap:balance}
 .tg-band p{margin:0;color:var(--muted);max-width:56ch}
 .tg-btn{background:var(--tg);border-color:var(--tg);color:#FFFFFF;box-shadow:0 12px 30px -12px var(--tg)}
+
+/* Pagine statiche: prezzi nascosti se non ricontrollati da 24 ore */
+.stale-only{display:none}
+.is-stale .price-only{display:none!important}
+.is-stale .stale-only{display:revert}
+.card .exp-flag.stale-only{display:none}
+.card.is-stale .exp-flag.stale-only{display:inline-block}
+a.card-media{text-decoration:none}
+.card h3 a{color:inherit}
+.card h3 a:hover{text-decoration:underline}
+.d-link{display:inline-block;margin-top:10px;font-weight:700;color:var(--hot)}

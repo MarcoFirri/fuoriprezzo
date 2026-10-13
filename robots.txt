@@ -1,2 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /templates/
+Disallow: /tools/
+
+Sitemap: https://fuoriprezzo.it/sitemap.xml
