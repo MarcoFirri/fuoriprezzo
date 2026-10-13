@@ -1,11 +1,14 @@
 name: Pubblica su Instagram
 
 on:
-  # Modalità prudente: solo la scelta del giorno, al massimo un post ogni 12 ore
+  # Cosa e quando pubblicare lo decide .github/scripts/instagram-piano.mjs (strategia in data/instagram-strategia.json).
+  # Fino all'11/11/2026 modalità prudente: solo la scelta del giorno, al massimo un contenuto ogni 12 ore, niente storie.
   push:
     branches: [main]
     paths: ['data/offerte.js']
   schedule:
+    # Ogni ora: controlla se è l'orario scelto dalla strategia
+    - cron: '5 * * * *'
     # Rinnovo del token il 1° di ogni mese
     - cron: '17 6 1 * *'
   workflow_dispatch:
@@ -16,17 +19,25 @@ on:
         options: [verifica, pubblica, rinnova-token]
         default: verifica
       asin:
-        description: "ASIN dell'offerta da pubblicare, oppure 'tutte'"
+        description: "ASIN dell'offerta da pubblicare subito, oppure 'tutte' (vuoto = decide la strategia)"
         required: false
         default: ""
+      formato:
+        description: "Formato per la pubblicazione manuale"
+        type: choice
+        options: [foto, reel, storia]
+        default: foto
+
+# Mai due pubblicazioni nello stesso momento
+concurrency:
+  group: instagram
+  cancel-in-progress: false
 
 jobs:
   instagram:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -34,5 +45,6 @@ jobs:
         run: node .github/scripts/instagram.mjs
         env:
           INSTAGRAM_TOKEN: ${{ secrets.INSTAGRAM_TOKEN }}
-          AZIONE: ${{ github.event_name == 'schedule' && 'rinnova-token' || github.event.inputs.azione || 'pubblica' }}
+          AZIONE: ${{ github.event.schedule == '17 6 1 * *' && 'rinnova-token' || github.event.inputs.azione || 'pubblica' }}
           FORCE_ASIN: ${{ github.event.inputs.asin }}
+          FORCE_FORMATO: ${{ github.event.inputs.formato }}

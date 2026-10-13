@@ -43,12 +43,28 @@ try {
   for (const m of media.data || []) {
     const p = { id: m.id, data: m.timestamp, tipo: m.media_product_type || m.media_type, link: m.permalink,
       didascalia: (m.caption || '').split('\n').filter(Boolean).slice(0, 3).join(' · '), like: m.like_count, commenti: m.comments_count, insight: {} };
-    for (const metric of ['reach', 'views', 'saved', 'shares', 'total_interactions']) {
+    const metriche = ['reach', 'views', 'saved', 'shares', 'total_interactions'];
+    if (m.media_product_type === 'REELS') metriche.push('ig_reels_avg_watch_time', 'ig_reels_video_view_total_time');
+    for (const metric of metriche) {
       try { const r = await ig(`${m.id}/insights`, { metric }); p.insight[metric] = r.data?.[0]?.values?.[0]?.value ?? null; }
       catch (e) { p.insight[metric] = null; }
     }
     out.post.push(p);
   }
+  // Le storie restano consultabili solo per 24 ore: qui ci sono quelle ancora attive
+  try {
+    const st = await ig(`${id}/stories`, { fields: 'id,timestamp' });
+    out.storie = [];
+    for (const s of st.data || []) {
+      const p = { id: s.id, data: s.timestamp, insight: {} };
+      for (const metric of ['reach', 'views', 'replies', 'shares', 'total_interactions']) {
+        try { const r = await ig(`${s.id}/insights`, { metric }); p.insight[metric] = r.data?.[0]?.values?.[0]?.value ?? null; }
+        catch (e) { p.insight[metric] = null; }
+      }
+      out.storie.push(p);
+    }
+  } catch (e) { out.errori.push(`storie: ${e.message}`); }
+  try { out.strategia = JSON.parse(fs.readFileSync('data/instagram-strategia.json', 'utf8')); } catch {}
 } catch (e) { out.errori.push(`account: ${e.message}`); }
 
 fs.writeFileSync('insights.json', JSON.stringify(out, null, 2));

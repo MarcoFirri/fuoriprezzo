@@ -1,12 +1,14 @@
-// Pubblica su Instagram le offerte nuove di data/offerte.js (immagine img/<ASIN>-ig.jpg).
-// Gira su GitHub Actions. Azioni: pubblica (default), verifica, rinnova-token.
-import { execSync } from 'node:child_process';
+// Pubblica su Instagram post, reel e storie delle offerte di data/offerte.js.
+// Cosa e quando lo decide instagram-piano.mjs, seguendo data/instagram-strategia.json e i limiti fissi.
+// Gira su GitHub Actions (a ogni modifica delle offerte e ogni ora). Azioni: pubblica (default), verifica, rinnova-token.
 import vm from 'node:vm';
 import fs from 'node:fs';
+import { decidi, leggiStrategia, sconto, FINE_PRUDENZA } from './instagram-piano.mjs';
 
 const TOKEN = process.env.INSTAGRAM_TOKEN || '';
 const ACTION = (process.env.AZIONE || 'pubblica').trim();
 const FORCE = (process.env.FORCE_ASIN || '').trim();
+const FORCE_FORMATO = (process.env.FORCE_FORMATO || '').trim();
 const DRY = process.env.DRY_RUN === '1';
 const SITE = 'https://fuoriprezzo.it/';
 const API = 'https://graph.instagram.com';
@@ -16,8 +18,8 @@ function load(src){
   return { cfg: ctx.window.FP_CONFIG || {}, offers: ctx.window.FP_OFFERTE || [] };
 }
 const now = load(fs.readFileSync('data/offerte.js', 'utf8'));
-let prev = { cfg: {}, offers: [] };
-try { prev = load(execSync('git show HEAD~1:data/offerte.js', { encoding: 'utf8', stdio: ['ignore','pipe','ignore'] })); } catch {}
+let strategia = leggiStrategia();
+try { strategia = leggiStrategia(JSON.parse(fs.readFileSync('data/instagram-strategia.json', 'utf8'))); } catch {}
 
 async function ig(path, params = {}, method = 'GET'){
   const qs = new URLSearchParams({ ...params, access_token: TOKEN });
@@ -46,19 +48,9 @@ if (ACTION === 'rinnova-token') {
   process.exit(0);
 }
 
-const fresh = o => (!o.scadenza || new Date(o.scadenza) > new Date())
-  && o.controllato && (Date.now() - new Date(o.controllato)) < 24 * 3600e3;
 const pick = now.cfg.sceltaDelGiorno;
-let toPost;
-if (FORCE) toPost = now.offers.filter(o => FORCE === 'tutte' || o.asin === FORCE);
-else {
-  const before = new Set(prev.offers.map(o => o.asin));
-  // Modalità prudente: su Instagram va solo la scelta del giorno, quando è nuova o cambia
-  const changed = pick && (pick !== prev.cfg.sceltaDelGiorno || !before.has(pick));
-  toPost = changed ? now.offers.filter(o => o.asin === pick) : [];
-}
-toPost = toPost.filter(o => fresh(o) && fs.existsSync(`img/${o.asin}-ig.jpg`));
-if (!toPost.length) { console.log('Nessuna offerta nuova da pubblicare su Instagram.'); process.exit(0); }
+const FILE = { ig: a => `img/${a}-ig.jpg`, reel: a => `img/${a}-reel.mp4`, story: a => `img/${a}-story.jpg` };
+const esiste = (asin, tipo) => fs.existsSync(FILE[tipo](asin));
 
 const eur = v => new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(v);
 const tz = { timeZone: 'Europe/Rome' };
@@ -69,55 +61,118 @@ const TAGS = {
   cucina: '#cucina #elettrodomestici #kitchen', sport: '#sport #fitness #allenamento', giochi: '#giochi #giocattoli #boardgames',
   bellezza: '#bellezza #beauty #skincare', 'fai-da-te': '#faidate #diy #utensili'
 };
-function caption(o){
+// apertura = cosa si legge per primo (la strategia prova le varianti e tiene quella che rende di più)
+function caption(o, apertura = 'scelta'){
   const ref = o.prezzoRiferimento;
-  const disc = ref ? Math.round((ref - o.prezzo) / ref * 100) : 0;
+  const disc = sconto(o);
+  const prezzo = ref && disc > 0 ? `💶 ${eur(o.prezzo)} invece di ${eur(ref)} (−${disc}%)` : `💶 ${eur(o.prezzo)}`;
+  const titolo = o.titoloBreve || o.titolo;
   const L = [];
-  if (o.asin === pick) L.push('🔥 SCELTA DEL GIORNO', '');
-  else if (o.etichetta) L.push(`⚡️ ${o.etichetta.toUpperCase()}`, '');
-  L.push(o.titoloBreve || o.titolo, '');
-  L.push(ref && disc > 0 ? `💶 ${eur(o.prezzo)} invece di ${eur(ref)} (−${disc}%)` : `💶 ${eur(o.prezzo)}`);
+  if (apertura === 'prezzo') L.push(prezzo, titolo, '');
+  else if (apertura === 'nota' && o.nota) L.push(`📉 ${o.nota}`, titolo, '', prezzo);
+  else {
+    if (o.asin === pick) L.push('🔥 SCELTA DEL GIORNO', '');
+    else if (o.etichetta) L.push(`⚡️ ${o.etichetta.toUpperCase()}`, '');
+    L.push(titolo, '', prezzo);
+  }
+  if (apertura === 'prezzo' && o.asin === pick) L.push('🔥 Scelta del giorno');
   if (ref && o.tipoRiferimento) L.push(`ℹ️ ${eur(ref)} è il ${o.tipoRiferimento}`);
-  if (o.nota) L.push(`📉 ${o.nota}`);
+  if (o.nota && apertura !== 'nota') L.push(`📉 ${o.nota}`);
   if (o.scadenza) { const s = new Date(o.scadenza); L.push(`⏳ L'offerta termina il ${giorno(s)} alle ${ora(s)}`); }
   if (o.valutazione) L.push(`⭐️ ${String(o.valutazione).replace('.', ',')}/5${o.recensioni ? ` su ${o.recensioni} recensioni` : ''}`);
   L.push('', '👉 Trovi l\'offerta col link in bio!', '');
   const c = new Date(o.controllato);
-  L.push(`Prezzo verificato su Amazon.it il ${giorno(c)} alle ${ora(c)}: può cambiare in qualsiasi momento. #pubblicità Link affiliato Amazon: per te il prezzo non cambia.`, '');
+  L.push(`Prezzo verificato su Amazon.it il ${giorno(c)} alle ${ora(c)}: può cambiare in qualsiasi momento. #pubblicità Link affiliato Amazon: per te il prezzo non cambia.`);
+  L.push(`Codice Amazon: ${o.asin}`, '');
   L.push(`#offerte #offerteamazon #amazon #sconti #risparmio #minimostorico #fuoriprezzo ${TAGS[o.categoria] || ''}`.trim());
   return L.join('\n');
 }
 
-if (DRY) { for (const o of toPost) console.log(caption(o) + '\n---'); process.exit(0); }
+// Aspetta che il file sia online su fuoriprezzo.it (la pubblicazione del sito richiede qualche minuto)
+async function online(url){
+  for (let i = 0; i < 40; i++) {
+    const r = await fetch(url, { method: 'HEAD' }).catch(() => null);
+    if (r?.ok) return;
+    await sleep(15000);
+  }
+  throw new Error(`file non raggiungibile: ${url}`);
+}
+async function pubblica(userId, params, attese = 20){
+  const box = await ig(`${userId}/media`, params, 'POST');
+  for (let i = 0; i < attese; i++) {
+    const st = await ig(box.id, { fields: 'status_code' });
+    if (st.status_code === 'FINISHED') break;
+    if (st.status_code === 'ERROR') throw new Error('Instagram non ha accettato il file');
+    if (i === attese - 1) throw new Error('Instagram non ha finito di elaborare il file in tempo');
+    await sleep(5000);
+  }
+  return ig(`${userId}/media_publish`, { creation_id: box.id }, 'POST');
+}
+async function pubblicaFeed(userId, o, formato, apertura){
+  const url = SITE + FILE[formato === 'reel' ? 'reel' : 'ig'](o.asin);
+  await online(url);
+  if (formato === 'reel') await pubblica(userId, { media_type: 'REELS', video_url: url, caption: caption(o, apertura), share_to_feed: 'true' }, 60);
+  else await pubblica(userId, { image_url: url, caption: caption(o, apertura) });
+  console.log(`Pubblicato su Instagram: ${o.asin} come ${formato}.`);
+}
+async function pubblicaStoria(userId, o){
+  const url = SITE + FILE.story(o.asin);
+  await online(url);
+  await pubblica(userId, { media_type: 'STORIES', image_url: url });
+  console.log(`Storia pubblicata: ${o.asin}.`);
+}
+
+const byAsin = a => now.offers.find(o => o.asin === a);
+
+// Pubblicazione manuale (dal pulsante "Run workflow"): salta orari e strategia, non i controlli sui prezzi
+if (FORCE) {
+  const valide = now.offers.filter(o => (FORCE === 'tutte' || o.asin === FORCE)
+    && (!o.scadenza || new Date(o.scadenza) > new Date()) && Date.now() - new Date(o.controllato) < 24 * 3600e3 && esiste(o.asin, 'ig'));
+  if (!valide.length) { console.log('Nessuna offerta valida da pubblicare.'); process.exit(0); }
+  if (DRY) { for (const o of valide) console.log(caption(o) + '\n---'); process.exit(0); }
+  const me = await ig('me', { fields: 'user_id' });
+  let failed = false;
+  for (const o of valide) {
+    const formato = FORCE_FORMATO === 'reel' && esiste(o.asin, 'reel') ? 'reel' : 'foto';
+    try {
+      if (FORCE_FORMATO === 'storia') await pubblicaStoria(me.user_id, o);
+      else await pubblicaFeed(me.user_id, o, formato, 'scelta');
+    } catch (e) { failed = true; console.error(`Errore per ${o.asin}: ${e.message}`); }
+  }
+  process.exit(failed ? 1 : 0);
+}
+
+let me = { user_id: null }, recenti = [], storie = [];
+if (process.env.SIMULA || (DRY && !TOKEN)) ({ recenti = [], storie = [] } = JSON.parse(process.env.SIMULA || '{}'));
+else {
+  me = await ig('me', { fields: 'user_id' });
+  recenti = (await ig(`${me.user_id}/media`, { fields: 'id,caption,timestamp,media_product_type', limit: '25' })).data || [];
+  // Le storie servono solo dopo la fine della prudenza; se Instagram non le restituisce, nessuna storia
+  if (Date.now() >= FINE_PRUDENZA) {
+    try { storie = (await ig(`${me.user_id}/stories`, { fields: 'id,timestamp' })).data || []; }
+    catch (e) { console.log(`Storie non leggibili (${e.message}): oggi niente storie.`); storie = Array(9).fill({ timestamp: new Date().toISOString() }); }
+  }
+}
+const d = decidi({ now: new Date(process.env.ADESSO || Date.now()), offerte: now.offers, cfg: now.cfg, strategia, recenti, storie, file: esiste });
+for (const m of d.motivi) console.log(m);
+if (DRY) {
+  if (d.feed) console.log('\n' + caption(byAsin(d.feed.asin), d.feed.apertura));
+  process.exit(0);
+}
 
 let failed = false;
-for (const o of toPost) {
-  const url = `${SITE}img/${o.asin}-ig.jpg`;
-  try {
-    // Aspetta che l'immagine sia online su fuoriprezzo.it (la pubblicazione del sito richiede qualche minuto)
-    let ok = false;
-    for (let i = 0; i < 40 && !ok; i++) {
-      const r = await fetch(url, { method: 'HEAD' }).catch(() => null);
-      ok = !!(r && r.ok);
-      if (!ok) await sleep(15000);
+if (d.feed) {
+  try { await pubblicaFeed(me.user_id, byAsin(d.feed.asin), d.feed.formato, d.feed.apertura); }
+  catch (e) {
+    failed = true; console.error(`Errore per ${d.feed.asin}: ${e.message}`);
+    if (d.feed.formato === 'reel') {
+      try { await pubblicaFeed(me.user_id, byAsin(d.feed.asin), 'foto', d.feed.apertura); failed = false; }
+      catch (e2) { console.error(`Anche la foto non è andata: ${e2.message}`); }
     }
-    if (!ok) throw new Error(`immagine non raggiungibile: ${url}`);
-    const me = await ig('me', { fields: 'user_id' });
-    // Al massimo un post ogni 20 ore
-    if (!FORCE) {
-      const last = await ig(`${me.user_id}/media`, { fields: 'timestamp', limit: '1' });
-      const t = last.data?.[0]?.timestamp;
-      if (t && Date.now() - new Date(t) < 12 * 3600e3) { console.log('Ultimo post meno di 12 ore fa: salto.'); continue; }
-    }
-    const box = await ig(`${me.user_id}/media`, { image_url: url, caption: caption(o) }, 'POST');
-    for (let i = 0; i < 20; i++) {
-      const st = await ig(box.id, { fields: 'status_code' });
-      if (st.status_code === 'FINISHED') break;
-      if (st.status_code === 'ERROR') throw new Error('Instagram non ha accettato l\'immagine');
-      await sleep(5000);
-    }
-    await ig(`${me.user_id}/media_publish`, { creation_id: box.id }, 'POST');
-    console.log(`Pubblicata su Instagram: ${o.asin}`);
-  } catch (e) { failed = true; console.error(`Errore per ${o.asin}: ${e.message}`); }
+  }
+}
+if (d.storia && !d.prudente) {
+  try { await pubblicaStoria(me.user_id, byAsin(d.storia)); }
+  catch (e) { failed = true; console.error(`Errore nella storia di ${d.storia}: ${e.message}`); }
 }
 process.exit(failed ? 1 : 0);
