@@ -20,7 +20,7 @@ Scrivi a Marco sempre in **italiano semplice**: non è un tecnico.
 | `tools/build.mjs` | Genera `index.html`, `offerta/<asin>/`, `categoria/<slug>/`, `sitemap.xml`, `robots.txt`. **Eseguirlo a ogni modifica** di `data/` o `templates/`. |
 | `templates/index.html` | Modello della home (non modificare `index.html` a mano). |
 | `tools/render_post.py ASIN` | Crea le immagini social: `img/<ASIN>.png` (Telegram) e `img/<ASIN>-ig.jpg` (Instagram). Richiede `img/<ASIN>.svg`. |
-| `tools/render_reel.py ASIN` | Crea il reel `img/<ASIN>-reel.mp4` (12 secondi, senza musica) e la storia `img/<ASIN>-story.jpg`. Richiede `img/<ASIN>.svg` e ffmpeg. |
+| `tools/render_reel.py ASIN` | Crea il reel `img/<ASIN>-reel.mp4` (12 secondi, con la nostra base musicale `assets/musica/base.m4a`, creata da `tools/musica.py`: mai brani di altri) e la storia `img/<ASIN>-story.jpg`. Richiede `img/<ASIN>.svg` e ffmpeg. |
 | `tools/render_promo.py ASIN` | Reel in stile pubblicità di FuoriPrezzo (15 secondi: domanda, chi siamo, offerta, chiusura). Sostituisce `img/<ASIN>-reel.mp4`; usarlo dopo `render_reel.py` quando Marco chiede un reel "pubblicità". |
 | `data/instagram-strategia.json` | Strategia Instagram (formato, orari, prima riga delle didascalie, storie al giorno). La aggiorna da sola ogni mattina il workflow `instagram-strategia.yml`. |
 | `favicon.svg` | Icona del sito (etichetta rossa). Dopo averla cambiata: `python3 tools/render_favicon.py` rigenera `favicon.ico`, `favicon-96.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`. |

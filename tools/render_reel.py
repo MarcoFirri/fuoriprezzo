@@ -1,4 +1,4 @@
-"""Crea il reel e la storia Instagram di un'offerta: img/<ASIN>-reel.mp4 (1080x1920, 12 secondi, senza musica)
+"""Crea il reel e la storia Instagram di un'offerta: img/<ASIN>-reel.mp4 (1080x1920, 12 secondi, con la base musicale di assets/musica)
 e img/<ASIN>-story.jpg (1080x1920, l'ultima scena del reel). Usa l'illustrazione img/<ASIN>.svg.
 Uso: python3 tools/render_reel.py ASIN   (dalla cartella del sito; serve ffmpeg)"""
 import json, os, subprocess, sys, tempfile, datetime
@@ -82,8 +82,11 @@ with sync_playwright() as p:
     b.close()
 
 # H.264 + audio AAC muto: i formati che Instagram accetta per reel e storie
+# Base musicale nostra (tools/musica.py); se manca, audio muto
+MUSICA = 'assets/musica/base.m4a'
+AUDIO = ['-i', MUSICA] if os.path.exists(MUSICA) else ['-f', 'lavfi', '-i', 'anullsrc=channel_layout=stereo:sample_rate=48000']
 subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-framerate', str(FPS), '-i', f'{frames}/%04d.jpg',
-                '-f', 'lavfi', '-i', 'anullsrc=channel_layout=stereo:sample_rate=48000', '-shortest',
+                *AUDIO, '-shortest', '-af', f'afade=t=out:st={SECONDS - 1}:d=1',
                 '-c:v', 'libx264', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-crf', '20', '-r', str(FPS),
                 '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', f'img/{asin}-reel.mp4'], check=True)
 for f in os.listdir(frames): os.remove(os.path.join(frames, f))
