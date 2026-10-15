@@ -2,7 +2,7 @@
 // Non chiama Instagram: riceve i dati e restituisce una decisione, così si può provare senza pubblicare.
 // La strategia (data/instagram-strategia.json) cambia ogni giorno in base ai risultati; i LIMITI qui sotto no.
 
-// Limitazione dell'account fino all'11/11/2026: solo la scelta del giorno, un contenuto ogni 12 ore,
+// Limitazione dell'account fino all'11/11/2026: solo la scelta del giorno, un'offerta (post + reel) ogni 12 ore,
 // al massimo una storia al giorno (storie attive da subito: deciso da Marco il 13/10/2026).
 export const FINE_PRUDENZA = new Date('2026-11-12T00:00:00+01:00');
 const LIMITI = {
@@ -75,8 +75,8 @@ export function decidi({ now, offerte, cfg, strategia, recenti, storie, file }){
   const pubblicati = new Set(recenti.map(m => asinDelPost(m.caption, offerte)).filter(Boolean));
 
   // --- Post o reel nel profilo ---
-  // Dal 12/11 ogni offerta esce come post + reel insieme (scelta di Marco, 15/10/2026): i limiti contano le offerte, non i reel
-  const contano = prudente ? recenti : recenti.filter(m => m.media_product_type !== 'REELS');
+  // Ogni offerta esce come post + reel insieme (scelta di Marco, 15/10/2026, anche durante la prudenza): i limiti contano le offerte, non i reel
+  const contano = recenti.filter(m => m.media_product_type !== 'REELS');
   const ultimo = contano.map(m => new Date(m.timestamp)).sort((a, b) => b - a)[0];
   const in24 = contano.filter(m => now - new Date(m.timestamp) < 24 * H).length;
   const maxGiorno = Math.min(L.postAlGiorno, clamp(strategia.postAlGiorno | 0, 1, 2));
@@ -95,7 +95,7 @@ export function decidi({ now, offerte, cfg, strategia, recenti, storie, file }){
   else if (in24 >= maxGiorno) out.motivi.push(`Già ${in24} post nelle ultime 24 ore (massimo ${maxGiorno}).`);
   else if (ora < orario && !urgente) out.motivi.push(`Oggi l'orario scelto è alle ${orario}: aspetto.`);
   else {
-    let formato = prudente ? scegli(strategia.formati, `${oggi}-${o.asin}-formato`) : 'entrambi';
+    let formato = 'entrambi';
     if (formato !== 'foto' && !file(o.asin, 'reel')) formato = 'foto';
     let apertura = scegli(strategia.aperture, `${oggi}-${o.asin}-apertura`);
     if (apertura === 'nota' && !o.nota) apertura = 'scelta';
