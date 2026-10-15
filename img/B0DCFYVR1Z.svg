@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 320">
+  <defs>
+    <linearGradient id="b" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0F2A3A"/><stop offset=".4" stop-color="#2F5B73"/><stop offset="1" stop-color="#0B1E2A"/>
+    </linearGradient>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#A9F25A"/><stop offset="1" stop-color="#6FC22E"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="200" cy="298" rx="80" ry="11" fill="#17112A" opacity=".24"/>
+  <g transform="rotate(-10 200 170)">
+    <!-- corpo -->
+    <path d="M168 96h64c8 0 12 6 11 14l-12 170c-1 9-7 14-15 14h-32c-8 0-14-5-15-14l-12-170c-1-8 3-14 11-14z" fill="url(#b)"/>
+    <rect x="186" y="150" width="28" height="52" rx="14" fill="#0A1620"/>
+    <circle cx="200" cy="166" r="7" fill="#A9F25A"/>
+    <rect x="194" y="182" width="12" height="4" rx="2" fill="#5E7D8E"/>
+    <!-- testina con lama -->
+    <rect x="160" y="54" width="80" height="46" rx="10" fill="url(#g)"/>
+    <rect x="152" y="40" width="96" height="20" rx="6" fill="#E9EEF2"/>
+    <g stroke="#9AA7B2" stroke-width="2">
+      <path d="M160 44v12M168 44v12M176 44v12M184 44v12M192 44v12M200 44v12M208 44v12M216 44v12M224 44v12M232 44v12M240 44v12"/>
+    </g>
+    <rect x="170" y="72" width="60" height="6" rx="3" fill="#FFFFFF" opacity=".45"/>
+  </g>
+  <!-- pettine -->
+  <g transform="translate(278 210) rotate(14)">
+    <rect x="0" y="0" width="70" height="40" rx="8" fill="#E3E8EC"/>
+    <g fill="#B9C3CB"><rect x="6" y="-14" width="5" height="18" rx="2"/><rect x="17" y="-14" width="5" height="18" rx="2"/><rect x="28" y="-14" width="5" height="18" rx="2"/><rect x="39" y="-14" width="5" height="18" rx="2"/><rect x="50" y="-14" width="5" height="18" rx="2"/><rect x="61" y="-14" width="5" height="18" rx="2"/></g>
+  </g>
+</svg>

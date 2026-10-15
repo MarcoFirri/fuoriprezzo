@@ -15,6 +15,70 @@ window.FP_CONFIG = {
 
 window.FP_OFFERTE = [
   {
+    asin: 'B0F2J8X7HZ',
+    categoria: 'bellezza',
+    icona: 'bottle',
+    illustrazione: 'img/B0F2J8X7HZ.svg',
+    titolo: 'Oral-B iO 3 Spazzolino Elettrico, 1 Testina, Custodia, Dentifricio, Nero | 1 Testine di Ricambio per Spazzolino Elettrico, Ricaricabile, Custodia + 1 Dentifricio Pro-Expert Sbiancante Delicato',
+    titoloBreve: 'Spazzolino elettrico Oral-B iO 3 con custodia e dentifricio',
+    prezzo: 59.98,
+    prezzoRiferimento: 89.00,
+    tipoRiferimento: 'prezzo più basso ultimi 30gg',
+    riferimentoBreve: 'Minimo 30 gg',
+    badge: 'Minimo 30 giorni',
+    nota: 'Secondo la cronologia prezzi di Amazon è il prezzo più basso degli ultimi 30 giorni (prezzo consigliato 139,99 €)',
+    etichetta: 'Offerta a tempo',
+    controllato: '2026-10-15T14:51:00+02:00',
+    valutazione: 4.5,
+    recensioni: 783,
+    storico: [
+      { data: '2026-10-15', prezzo: 59.98 }
+    ]
+  },
+  {
+    asin: 'B0DCFYVR1Z',
+    categoria: 'bellezza',
+    icona: 'bottle',
+    illustrazione: 'img/B0DCFYVR1Z.svg',
+    titolo: 'Philips OneBlade QP2834/31 - Regolabarba elettrico 360 autentico, per viso e corpo, 3 lame da 360, 4 pettini per barba (1, 2, 3, 5 mm), 1 kit per il corpo',
+    titoloBreve: 'Regolabarba Philips OneBlade 360 viso e corpo con 3 lame',
+    prezzo: 39.99,
+    prezzoRiferimento: 50.63,
+    tipoRiferimento: 'prezzo più basso ultimi 30gg',
+    riferimentoBreve: 'Minimo 30 gg',
+    badge: 'Minimo 30 giorni',
+    nota: 'Secondo la cronologia prezzi di Amazon è il prezzo più basso degli ultimi 30 giorni (prezzo consigliato 64,99 €)',
+    etichetta: 'Offerta a tempo',
+    controllato: '2026-10-15T14:54:00+02:00',
+    valutazione: 4.4,
+    recensioni: 4969,
+    storico: [
+      { data: '2026-10-15', prezzo: 39.99 }
+    ]
+  },
+  {
+    asin: 'B0C9D4KL9D',
+    categoria: 'casa',
+    icona: 'house',
+    illustrazione: 'img/B0C9D4KL9D.svg',
+    titolo: 'Dreo Termoventilatore a risparmio energetico, 34 dB, silenzioso, 1500 W, in ceramica PTC, termostato, protezione da surriscaldamento e ribaltamento, timer 12 ore, riscaldamento elettrico per camere da',
+    titoloBreve: 'Termoventilatore ceramico Dreo 1500 W silenzioso con termostato',
+    prezzo: 42.49,
+    prezzoRiferimento: 49.99,
+    tipoRiferimento: 'prezzo più basso ultimi 30gg',
+    riferimentoBreve: 'Minimo 30 gg',
+    badge: 'Minimo 30 giorni',
+    nota: 'Secondo la cronologia prezzi di Amazon è il prezzo più basso degli ultimi 30 giorni',
+    etichetta: 'Offerta a tempo',
+    scadenza: '2026-10-15T23:59:00+02:00',
+    controllato: '2026-10-15T14:53:00+02:00',
+    valutazione: 4.6,
+    recensioni: 10630,
+    storico: [
+      { data: '2026-10-15', prezzo: 42.49 }
+    ]
+  },
+  {
     asin: 'B0F1G94CQV',
     categoria: 'bellezza',
     icona: 'bottle',
