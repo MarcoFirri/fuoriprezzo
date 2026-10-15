@@ -49,7 +49,7 @@ ig = f"""<html><head><style>{BASE}
 <div class="foot"><span>Prezzo verificato il {when}</span><b>Link in bio →</b></div></div></div></body></html>"""
 
 with sync_playwright() as p:
-    b = p.chromium.launch()
+    b = p.chromium.launch(**({'executable_path': __import__('os').environ['PW_CHROMIUM']} if __import__('os').environ.get('PW_CHROMIUM') else {}))
     for html, w, h, out, kw in [(tg, 1280, 720, f'img/{asin}.png', {}), (ig, 1080, 1350, f'img/{asin}-ig.jpg', {'type': 'jpeg', 'quality': 92})]:
         pg = b.new_page(viewport={'width': w, 'height': h}); pg.set_content(html); pg.wait_for_timeout(300)
         pg.screenshot(path=out, **kw); pg.close()

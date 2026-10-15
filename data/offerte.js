@@ -10,10 +10,31 @@
 */
 window.FP_CONFIG = {
   tag: 'marcofirri-21',
-  sceltaDelGiorno: 'B09B8X9RGM'
+  sceltaDelGiorno: 'B0F1G94CQV'
 };
 
 window.FP_OFFERTE = [
+  {
+    asin: 'B0F1G94CQV',
+    categoria: 'bellezza',
+    icona: 'bottle',
+    illustrazione: 'img/B0F1G94CQV.svg',
+    titolo: 'Oral-B iO 9 Spazzolino Elettrico, 1 Testina di Ricambio, Custodia, Nero | 1 Testina di Ricambio per Spazzolino Elettrico Ricaricabile, Custodia da Viaggio, Astuccio Magnetico, Pulizia Denti Efficace',
+    titoloBreve: 'Spazzolino elettrico Oral-B iO 9 con custodia da viaggio',
+    prezzo: 199.88,
+    prezzoRiferimento: 399.99,
+    tipoRiferimento: 'prezzo consigliato',
+    riferimentoBreve: 'Consigliato',
+    badge: 'Sotto il minimo 30 gg',
+    nota: 'Costa meno del prezzo più basso degli ultimi 30 giorni indicato da Amazon (219,99 €)',
+    etichetta: 'Offerta a vendita rapida',
+    controllato: '2026-10-15T11:35:00+02:00',
+    valutazione: 4.6,
+    recensioni: 96,
+    storico: [
+      { data: '2026-10-15', prezzo: 199.88 }
+    ]
+  },
   {
     asin: 'B09B8X9RGM',
     categoria: 'elettronica',

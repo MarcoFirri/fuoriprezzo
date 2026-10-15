@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://fuoriprezzo.it/</loc><lastmod>2026-10-13</lastmod><priority>1.0</priority></url>
+  <url><loc>https://fuoriprezzo.it/</loc><lastmod>2026-10-15</lastmod><priority>1.0</priority></url>
   <url><loc>https://fuoriprezzo.it/categoria/elettronica/</loc><lastmod>2026-10-13</lastmod><priority>0.7</priority></url>
-  <url><loc>https://fuoriprezzo.it/categoria/informatica/</loc><lastmod>2026-10-13</lastmod><priority>0.7</priority></url>
-  <url><loc>https://fuoriprezzo.it/categoria/casa/</loc><lastmod>2026-10-13</lastmod><priority>0.7</priority></url>
-  <url><loc>https://fuoriprezzo.it/categoria/cucina/</loc><lastmod>2026-10-13</lastmod><priority>0.7</priority></url>
-  <url><loc>https://fuoriprezzo.it/categoria/sport/</loc><lastmod>2026-10-13</lastmod><priority>0.7</priority></url>
-  <url><loc>https://fuoriprezzo.it/categoria/giochi/</loc><lastmod>2026-10-13</lastmod><priority>0.7</priority></url>
-  <url><loc>https://fuoriprezzo.it/categoria/bellezza/</loc><lastmod>2026-10-13</lastmod><priority>0.7</priority></url>
-  <url><loc>https://fuoriprezzo.it/categoria/fai-da-te/</loc><lastmod>2026-10-13</lastmod><priority>0.7</priority></url>
+  <url><loc>https://fuoriprezzo.it/categoria/informatica/</loc><lastmod>2026-10-15</lastmod><priority>0.7</priority></url>
+  <url><loc>https://fuoriprezzo.it/categoria/casa/</loc><lastmod>2026-10-15</lastmod><priority>0.7</priority></url>
+  <url><loc>https://fuoriprezzo.it/categoria/cucina/</loc><lastmod>2026-10-15</lastmod><priority>0.7</priority></url>
+  <url><loc>https://fuoriprezzo.it/categoria/sport/</loc><lastmod>2026-10-15</lastmod><priority>0.7</priority></url>
+  <url><loc>https://fuoriprezzo.it/categoria/giochi/</loc><lastmod>2026-10-15</lastmod><priority>0.7</priority></url>
+  <url><loc>https://fuoriprezzo.it/categoria/bellezza/</loc><lastmod>2026-10-15</lastmod><priority>0.7</priority></url>
+  <url><loc>https://fuoriprezzo.it/categoria/fai-da-te/</loc><lastmod>2026-10-15</lastmod><priority>0.7</priority></url>
+  <url><loc>https://fuoriprezzo.it/offerta/b0f1g94cqv/</loc><lastmod>2026-10-15</lastmod><priority>0.8</priority></url>
   <url><loc>https://fuoriprezzo.it/offerta/b09b8x9rgm/</loc><lastmod>2026-10-13</lastmod><priority>0.8</priority></url>
   <url><loc>https://fuoriprezzo.it/offerta/b0gzqs8p6d/</loc><lastmod>2026-10-12</lastmod><priority>0.3</priority></url>
 </urlset>
