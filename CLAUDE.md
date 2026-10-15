@@ -54,7 +54,7 @@ Il workflow `instagram.yml` gira ogni ora e a ogni modifica delle offerte; `.git
 Limiti fissi nel codice (la strategia non può superarli):
 - solo offerte vere, controllate da meno di 24 ore e non scadute; mai tra mezzanotte e le 8;
 - **fino all'11/11/2026** (account limitato il 12/10/2026, "non puoi condividere link"): solo la scelta del giorno, al massimo **un contenuto ogni 12 ore** e **una storia al giorno**, sempre della scelta del giorno (storie attive da subito: deciso da Marco il 13/10/2026);
-- dal 12/11/2026: al massimo 2 post o reel al giorno a 6 ore di distanza e 3 storie al giorno;
+- dal 12/11/2026: ogni offerta esce come post classico nella griglia + reel (solo nella sezione Reels); al massimo 2 offerte al giorno a 6 ore di distanza e 3 storie al giorno (deciso da Marco il 15/10/2026);
 - nelle didascalie nessun indirizzo web, solo "link in bio"; ogni didascalia contiene "Codice Amazon: <ASIN>" (serve a riconoscere cosa è già stato pubblicato);
 - niente modifiche frequenti a bio e profilo. Se arriva un nuovo avviso da Instagram: mettere in pausa i workflow `instagram.yml` e `instagram-strategia.yml` e avvisare Marco.
 

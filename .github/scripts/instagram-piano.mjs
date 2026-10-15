@@ -75,8 +75,10 @@ export function decidi({ now, offerte, cfg, strategia, recenti, storie, file }){
   const pubblicati = new Set(recenti.map(m => asinDelPost(m.caption, offerte)).filter(Boolean));
 
   // --- Post o reel nel profilo ---
-  const ultimo = recenti.map(m => new Date(m.timestamp)).sort((a, b) => b - a)[0];
-  const in24 = recenti.filter(m => now - new Date(m.timestamp) < 24 * H).length;
+  // Dal 12/11 ogni offerta esce come post + reel insieme (scelta di Marco, 15/10/2026): i limiti contano le offerte, non i reel
+  const contano = prudente ? recenti : recenti.filter(m => m.media_product_type !== 'REELS');
+  const ultimo = contano.map(m => new Date(m.timestamp)).sort((a, b) => b - a)[0];
+  const in24 = contano.filter(m => now - new Date(m.timestamp) < 24 * H).length;
   const maxGiorno = Math.min(L.postAlGiorno, clamp(strategia.postAlGiorno | 0, 1, 2));
   let candidati = offerte.filter(o => valida(o) && !pubblicati.has(o.asin) && file(o.asin, 'ig'));
   if (prudente) candidati = candidati.filter(o => o.asin === pick);
@@ -93,8 +95,8 @@ export function decidi({ now, offerte, cfg, strategia, recenti, storie, file }){
   else if (in24 >= maxGiorno) out.motivi.push(`Già ${in24} post nelle ultime 24 ore (massimo ${maxGiorno}).`);
   else if (ora < orario && !urgente) out.motivi.push(`Oggi l'orario scelto è alle ${orario}: aspetto.`);
   else {
-    let formato = scegli(strategia.formati, `${oggi}-${o.asin}-formato`);
-    if (formato === 'reel' && !file(o.asin, 'reel')) formato = 'foto';
+    let formato = prudente ? scegli(strategia.formati, `${oggi}-${o.asin}-formato`) : 'entrambi';
+    if (formato !== 'foto' && !file(o.asin, 'reel')) formato = 'foto';
     let apertura = scegli(strategia.aperture, `${oggi}-${o.asin}-apertura`);
     if (apertura === 'nota' && !o.nota) apertura = 'scelta';
     if (apertura === 'prezzo' && !(sconto(o) > 0)) apertura = 'scelta';

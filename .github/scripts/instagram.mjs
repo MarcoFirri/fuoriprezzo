@@ -172,7 +172,13 @@ if (DRY) {
 }
 
 let failed = false;
-if (d.feed) {
+if (d.feed?.formato === 'entrambi') {
+  // Post classico nella griglia + reel nella sezione Reels
+  for (const f of ['foto', 'reel']) {
+    try { await pubblicaFeed(me.user_id, byAsin(d.feed.asin), f, d.feed.apertura); }
+    catch (e) { failed = true; console.error(`Errore per ${d.feed.asin} (${f}): ${e.message}`); }
+  }
+} else if (d.feed) {
   try { await pubblicaFeed(me.user_id, byAsin(d.feed.asin), d.feed.formato, d.feed.apertura); }
   catch (e) {
     failed = true; console.error(`Errore per ${d.feed.asin}: ${e.message}`);
