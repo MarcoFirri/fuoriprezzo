@@ -73,9 +73,12 @@ function linkOf(o){
   const tag = now.cfg.tag ? `?tag=${encodeURIComponent(now.cfg.tag)}` : '';
   return `https://www.amazon.it/dp/${encodeURIComponent(o.asin)}${tag}`;
 }
+const pageOf = o => `${SITE}offerta/${o.asin.toLowerCase()}/`;
+// Il pulsante "Condividi" apre la scelta della chat su Telegram con il link alla pagina dell'offerta sul sito.
+const shareOf = o => `https://t.me/share/url?url=${encodeURIComponent(pageOf(o))}&text=${encodeURIComponent(`${o.titoloBreve || o.titolo} a ${eur(o.prezzo)}: offerta controllata da FuoriPrezzo. Canale: https://t.me/fuoriprezzo3`)}`;
 const buttons = o => ({ inline_keyboard: [
   [{ text: "🛒 Vai all'offerta su Amazon", url: linkOf(o) }],
-  [{ text: '📊 Tutte le offerte su fuoriprezzo.it', url: SITE }]
+  [{ text: '📊 Tutte le offerte', url: SITE }, { text: '📤 Condividi', url: shareOf(o) }]
 ]});
 async function tg(method, payload){
   let body, headers = {};
@@ -99,6 +102,19 @@ if (ACTION === 'foto-canale') {
   fd.append('photo', new Blob([fs.readFileSync('img/telegram-logo.png')], { type: 'image/png' }), 'logo.png');
   await tg('setChatPhoto', fd);
   console.log('Foto del canale aggiornata.');
+  process.exit(0);
+}
+if (ACTION === 'iscritti') {
+  // Conta gli iscritti al canale e li aggiunge a data/telegram-iscritti.json (uno al giorno al massimo).
+  const n = await tg('getChatMemberCount', { chat_id: CHAT });
+  const file = 'data/telegram-iscritti.json';
+  const storia = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : [];
+  const oggi = new Date().toISOString().slice(0, 10);
+  const resto = storia.filter(r => r.data !== oggi);
+  resto.push({ data: oggi, iscritti: n });
+  fs.writeFileSync(file, JSON.stringify(resto, null, 2) + '\n');
+  const prima = resto.length > 1 ? resto[resto.length - 2] : null;
+  console.log(`Iscritti al canale: ${n}${prima ? ` (il ${prima.data} erano ${prima.iscritti})` : ''}.`);
   process.exit(0);
 }
 if (ACTION === 'aggiungi-pulsanti') {

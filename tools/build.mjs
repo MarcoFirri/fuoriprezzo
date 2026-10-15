@@ -89,7 +89,7 @@ ${body}
         <div class="disclosure">In qualità di Affiliato Amazon, FuoriPrezzo riceve un guadagno dagli acquisti idonei. Per te il prezzo non cambia.</div>
       </div>
       <div><h4>Categorie</h4><ul>${CATS.map(c => `<li><a href="/categoria/${c.slug}/">${esc(c.nome)}</a></li>`).join('')}</ul></div>
-      <div><h4>Il sito</h4><ul><li><a href="/">Scelta del giorno</a></li><li><a href="/#come-funziona">Come funziona</a></li><li><a href="${TG}" target="_blank" rel="noopener">Canale Telegram</a></li><li><a href="/#privacy">Privacy e cookie</a></li></ul></div>
+      <div><h4>Il sito</h4><ul><li><a href="/">Scelta del giorno</a></li>${PAGINE.map(pg => `<li><a href="/${pg.slug}/">${esc(pg.nome)}</a></li>`).join('')}<li><a href="/#come-funziona">Come funziona</a></li><li><a href="${TG}" target="_blank" rel="noopener">Canale Telegram</a></li><li><a href="/#privacy">Privacy e cookie</a></li></ul></div>
     </div>
     <div class="foot-word" aria-hidden="true">fuori<span>prezzo</span></div>
   </div>
@@ -118,6 +118,13 @@ function staticCard(o){
     <a class="btn btn-hot btn-sm go" href="${aff(o)}" target="_blank" rel="nofollow sponsored noopener">Vedi su Amazon <span class="arr">→</span></a>
   </article>`;
 }
+
+// Riquadro di iscrizione al canale Telegram, uguale a quello della home
+const tgBand = () => `<section class="wrap sec"><div class="tg-band">
+  <div><h2>Le offerte arrivano prima su Telegram</h2><p>Iscriviti al canale: ogni nuova offerta e la scelta del giorno ti arrivano sul telefono appena le pubblichiamo.</p></div>
+  <a class="btn tg-btn" href="${TG}" target="_blank" rel="noopener"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.4 3.6 2.9 10.7c-1.3.5-1.2 1.3-.2 1.6l4.7 1.5 1.8 5.6c.2.7.4.9.9.9.4 0 .6-.2.9-.5l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.6c.3-1.3-.5-1.9-1.4-1.5Z"/></svg>Unisciti al canale <span class="arr">→</span></a>
+</div></section>`;
+const PAGINE = seo.pagine || [];
 
 function crumbs(list){
   return { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: list.map(([name, url], i) => ({ '@type': 'ListItem', position: i + 1, name, item: SITE + url })) };
@@ -155,6 +162,7 @@ for (const o of OFFERS) {
     <div class="hero-visual" style="--c:${c.colore}"><div class="blob"></div><div class="visual-icon">${img(o) ? `<img class="pimg" src="${img(o)}" alt="${esc(short(o))}" width="400" height="320">` : ''}</div></div>
   </div>
 </section>
+${tgBand()}
 ${others.length ? `<section class="wrap sec"><div class="sec-head"><div><h2>Altre offerte verificate</h2></div><a class="link-more" href="/">Tutte le offerte <span class="arr">→</span></a></div><div class="grid">${others.map(staticCard).join('')}</div></section>` : ''}`;
   fs.mkdirSync(`offerta/${o.asin.toLowerCase()}`, { recursive: true });
   fs.writeFileSync(`offerta/${o.asin.toLowerCase()}/index.html`, shell({
@@ -173,12 +181,32 @@ for (const c of CATS) {
   <div class="page-head" style="--c:${c.colore}"><div><h1>Offerte ${esc(c.nome)}</h1><p>${live.length ? `${live.length} ${live.length === 1 ? 'offerta attiva' : 'offerte attive'}` : 'Nuove offerte in arrivo'}</p></div></div>
   <div class="prose" style="padding-block:0 18px">${c.testo.map(p => `<p>${esc(p)}</p>`).join('')}</div>
   ${list.length ? `<div class="grid">${list.map(staticCard).join('')}</div>` : `<div class="empty">In questo momento non ci sono offerte ${esc(c.nome.toLowerCase())} verificate. Iscriviti al <a href="${TG}" target="_blank" rel="noopener">canale Telegram</a> per ricevere le prossime appena escono.</div>`}
-</section>`;
+</section>
+${tgBand()}`;
   fs.mkdirSync(`categoria/${c.slug}`, { recursive: true });
   fs.writeFileSync(`categoria/${c.slug}/index.html`, shell({
     cur: c.slug, body,
     headHtml: head({ title: c.titolo, desc: c.descrizione, url, image: `${SITE}/img/telegram-logo.png`,
       jsonld: [crumbs([['Home', '/'], [c.nome, url]]), { '@context': 'https://schema.org', '@type': 'CollectionPage', name: c.titolo, url: SITE + url, description: c.descrizione }] })
+  }));
+}
+
+// ---------- pagine speciali (offerte di oggi, Black Friday…): testi in data/seo.json, "pagine" ----------
+for (const pg of PAGINE) fs.rmSync(pg.slug, { recursive: true, force: true });
+for (const pg of PAGINE) {
+  const live = sorted.filter(o => !expired(o));
+  const url = `/${pg.slug}/`;
+  const body = `<section class="wrap">
+  <div class="page-head"><div><h1>${esc(pg.h1)}</h1><p>${live.length ? `${live.length} ${live.length === 1 ? 'offerta attiva' : 'offerte attive'}` : 'Nuove offerte in arrivo'}</p></div></div>
+  <div class="prose" style="padding-block:0 18px">${pg.testo.map(p => `<p>${esc(p)}</p>`).join('')}</div>
+  ${live.length ? `<div class="grid">${live.map(staticCard).join('')}</div>` : `<div class="empty">In questo momento non ci sono offerte verificate. Iscriviti al <a href="${TG}" target="_blank" rel="noopener">canale Telegram</a> per ricevere le prossime appena escono.</div>`}
+</section>
+${tgBand()}`;
+  fs.mkdirSync(pg.slug, { recursive: true });
+  fs.writeFileSync(`${pg.slug}/index.html`, shell({
+    cur: pg.slug, body,
+    headHtml: head({ title: pg.titolo, desc: pg.descrizione, url, image: `${SITE}/img/telegram-logo.png`,
+      jsonld: [crumbs([['Home', '/'], [pg.nome, url]]), { '@context': 'https://schema.org', '@type': 'CollectionPage', name: pg.titolo, url: SITE + url, description: pg.descrizione }] })
   }));
 }
 
@@ -189,7 +217,7 @@ const staticMain = `<section class="wrap" style="padding-block:28px">
   <p class="prose" style="padding:0">${esc(seo.home.intro)}</p>
   ${pick ? `<p><a href="${pageUrl(pick)}">Scelta del giorno: ${esc(short(pick))}</a></p>` : ''}
   <div class="grid">${sorted.filter(o => !expired(o)).slice(0, 12).map(staticCard).join('')}</div>
-  <nav aria-label="Categorie"><ul>${CATS.map(c => `<li><a href="/categoria/${c.slug}/">Offerte ${esc(c.nome)}</a></li>`).join('')}</ul></nav>
+  <nav aria-label="Categorie"><ul>${PAGINE.map(pg => `<li><a href="/${pg.slug}/">${esc(pg.nome)}</a></li>`).join('')}${CATS.map(c => `<li><a href="/categoria/${c.slug}/">Offerte ${esc(c.nome)}</a></li>`).join('')}</ul></nav>
 </section>`;
 let index = fs.readFileSync('templates/index.html', 'utf8')
   .replace('{{SEO_HEAD}}', head({ title: seo.home.titolo, desc: seo.home.descrizione, url: '/', image: pick ? ogImg(pick) : `${SITE}/img/telegram-logo.png`,
@@ -203,6 +231,7 @@ fs.writeFileSync('index.html', index);
 const day = d => new Date(d).toISOString().slice(0, 10);
 const latest = OFFERS.length ? OFFERS.map(o => o.controllato).sort().pop() : now.toISOString();
 const urls = [['/', day(latest), '1.0'],
+  ...PAGINE.map(pg => [`/${pg.slug}/`, day(latest), '0.8']),
   ...CATS.map(c => { const l = OFFERS.filter(o => o.categoria === c.slug).map(o => o.controllato).sort().pop(); return [`/categoria/${c.slug}/`, day(l || latest), '0.7']; }),
   ...OFFERS.map(o => [pageUrl(o), day(o.controllato), expired(o) ? '0.3' : '0.8'])];
 fs.writeFileSync('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
@@ -211,4 +240,4 @@ ${urls.map(([u, d, p]) => `  <url><loc>${SITE}${u}</loc><lastmod>${d}</lastmod><
 </urlset>
 `);
 fs.writeFileSync('robots.txt', `User-agent: *\nAllow: /\nDisallow: /templates/\nDisallow: /tools/\n\nSitemap: ${SITE}/sitemap.xml\n`);
-console.log(`Pagine generate: ${OFFERS.length} offerte, ${CATS.length} categorie, sitemap con ${urls.length} indirizzi (v=${V}).`);
+console.log(`Pagine generate: ${OFFERS.length} offerte, ${CATS.length} categorie, ${PAGINE.length} pagine speciali, sitemap con ${urls.length} indirizzi (v=${V}).`);

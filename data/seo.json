@@ -7,52 +7,111 @@
   },
   "categorie": [
     {
-      "slug": "elettronica", "nome": "Elettronica", "colore": "#FF6A4D",
+      "slug": "elettronica",
+      "nome": "Elettronica",
+      "colore": "#FF6A4D",
       "titolo": "Offerte Elettronica su Amazon: prezzi verificati | FuoriPrezzo",
       "descrizione": "Le migliori offerte Amazon su elettronica: smart speaker, cuffie, videocamere e smart home, con prezzo verificato e sconto reale.",
-      "testo": ["Cuffie, smart speaker, videocamere di sicurezza e dispositivi per la casa intelligente: qui trovi le offerte di elettronica su Amazon.it che abbiamo controllato.", "Per ogni prodotto indichiamo il prezzo di oggi, il prezzo con cui è calcolato lo sconto e la data dell'ultimo controllo."]
+      "testo": [
+        "Cuffie, smart speaker, videocamere di sicurezza e dispositivi per la casa intelligente: qui trovi le offerte di elettronica su Amazon.it che abbiamo controllato.",
+        "Per ogni prodotto indichiamo il prezzo di oggi, il prezzo con cui è calcolato lo sconto e la data dell'ultimo controllo."
+      ]
     },
     {
-      "slug": "informatica", "nome": "Informatica", "colore": "#9C8CFF",
+      "slug": "informatica",
+      "nome": "Informatica",
+      "colore": "#9C8CFF",
       "titolo": "Offerte Informatica su Amazon: SSD, monitor, tastiere | FuoriPrezzo",
       "descrizione": "Offerte Amazon di informatica verificate: SSD, monitor, tastiere, mouse e accessori per PC con lo sconto reale.",
-      "testo": ["SSD, monitor, tastiere, mouse e accessori per il PC: le offerte di informatica su Amazon.it con il prezzo verificato.", "Segnaliamo un prodotto solo quando il prezzo è davvero basso rispetto allo storico di Amazon."]
+      "testo": [
+        "SSD, monitor, tastiere, mouse e accessori per il PC: le offerte di informatica su Amazon.it con il prezzo verificato.",
+        "Segnaliamo un prodotto solo quando il prezzo è davvero basso rispetto allo storico di Amazon."
+      ]
     },
     {
-      "slug": "casa", "nome": "Casa", "colore": "#FFC93D",
+      "slug": "casa",
+      "nome": "Casa",
+      "colore": "#FFC93D",
       "titolo": "Offerte Casa su Amazon: robot aspirapolvere e altro | FuoriPrezzo",
       "descrizione": "Offerte Amazon per la casa verificate: robot aspirapolvere, purificatori, lampade e accessori con prezzo controllato.",
-      "testo": ["Robot aspirapolvere, purificatori d'aria, lampade e accessori per la casa: le offerte di Amazon.it che abbiamo controllato per te."]
+      "testo": [
+        "Robot aspirapolvere, purificatori d'aria, lampade e accessori per la casa: le offerte di Amazon.it che abbiamo controllato per te."
+      ]
     },
     {
-      "slug": "cucina", "nome": "Cucina", "colore": "#FF9356",
+      "slug": "cucina",
+      "nome": "Cucina",
+      "colore": "#FF9356",
       "titolo": "Offerte Cucina su Amazon: friggitrici ad aria e piccoli elettrodomestici | FuoriPrezzo",
       "descrizione": "Offerte Amazon per la cucina: friggitrici ad aria, macchine del caffè, frullatori e coltelli con il prezzo verificato.",
-      "testo": ["Friggitrici ad aria, macchine del caffè, frullatori e utensili: le offerte per la cucina su Amazon.it, con il prezzo controllato e lo sconto reale."]
+      "testo": [
+        "Friggitrici ad aria, macchine del caffè, frullatori e utensili: le offerte per la cucina su Amazon.it, con il prezzo controllato e lo sconto reale."
+      ]
     },
     {
-      "slug": "sport", "nome": "Sport", "colore": "#3DD9B6",
+      "slug": "sport",
+      "nome": "Sport",
+      "colore": "#3DD9B6",
       "titolo": "Offerte Sport e Fitness su Amazon | FuoriPrezzo",
       "descrizione": "Offerte Amazon su sport e fitness verificate: manubri, tappetini, borracce e attrezzatura con prezzo controllato.",
-      "testo": ["Attrezzatura per allenarsi a casa e all'aperto: manubri, tappetini, borracce e accessori in offerta su Amazon.it, con il prezzo verificato."]
+      "testo": [
+        "Attrezzatura per allenarsi a casa e all'aperto: manubri, tappetini, borracce e accessori in offerta su Amazon.it, con il prezzo verificato."
+      ]
     },
     {
-      "slug": "giochi", "nome": "Giochi", "colore": "#62BDFF",
+      "slug": "giochi",
+      "nome": "Giochi",
+      "colore": "#62BDFF",
       "titolo": "Offerte Giochi e Giocattoli su Amazon | FuoriPrezzo",
       "descrizione": "Offerte Amazon su giochi da tavolo, costruzioni e controller verificate, con prezzo controllato e sconto reale.",
-      "testo": ["Giochi da tavolo, costruzioni, giocattoli e controller: le offerte di Amazon.it che abbiamo verificato."]
+      "testo": [
+        "Giochi da tavolo, costruzioni, giocattoli e controller: le offerte di Amazon.it che abbiamo verificato."
+      ]
     },
     {
-      "slug": "bellezza", "nome": "Bellezza", "colore": "#EC86FF",
+      "slug": "bellezza",
+      "nome": "Bellezza",
+      "colore": "#EC86FF",
       "titolo": "Offerte Bellezza e Cura della persona su Amazon | FuoriPrezzo",
       "descrizione": "Offerte Amazon su bellezza e cura della persona: asciugacapelli, spazzolini elettrici e altro, con prezzo verificato.",
-      "testo": ["Asciugacapelli, spazzolini elettrici, rasoi e prodotti per la cura della persona in offerta su Amazon.it, con il prezzo controllato."]
+      "testo": [
+        "Asciugacapelli, spazzolini elettrici, rasoi e prodotti per la cura della persona in offerta su Amazon.it, con il prezzo controllato."
+      ]
     },
     {
-      "slug": "fai-da-te", "nome": "Fai da te", "colore": "#ADDC45",
+      "slug": "fai-da-te",
+      "nome": "Fai da te",
+      "colore": "#ADDC45",
       "titolo": "Offerte Fai da te e Utensili su Amazon | FuoriPrezzo",
       "descrizione": "Offerte Amazon su utensili e fai da te verificate: trapani, avvitatori, set di cacciaviti con prezzo controllato.",
-      "testo": ["Trapani, avvitatori, set di cacciaviti e utensili per il fai da te: le offerte di Amazon.it con il prezzo verificato."]
+      "testo": [
+        "Trapani, avvitatori, set di cacciaviti e utensili per il fai da te: le offerte di Amazon.it con il prezzo verificato."
+      ]
+    }
+  ],
+  "pagine": [
+    {
+      "slug": "offerte-oggi",
+      "nome": "Offerte di oggi",
+      "titolo": "Offerte Amazon di oggi verificate | FuoriPrezzo",
+      "descrizione": "Tutte le offerte Amazon di oggi controllate da FuoriPrezzo: prezzo verificato, sconto reale e data dell'ultimo controllo.",
+      "h1": "Offerte Amazon di oggi",
+      "testo": [
+        "Qui trovi tutte le offerte Amazon.it attive in questo momento, controllate da noi una per una.",
+        "Per ogni prodotto indichiamo il prezzo di oggi, il prezzo con cui è calcolato lo sconto e quando l'abbiamo controllato. Se il controllo è di più di 24 ore fa, il prezzo viene nascosto finché non lo verifichiamo di nuovo."
+      ]
+    },
+    {
+      "slug": "black-friday",
+      "nome": "Black Friday 2026",
+      "titolo": "Offerte Black Friday 2026 su Amazon verificate | FuoriPrezzo",
+      "descrizione": "Le offerte del Black Friday 2026 su Amazon.it controllate una per una: prezzo verificato sullo storico di Amazon e sconto reale. Black Friday: venerdì 27 novembre 2026.",
+      "h1": "Offerte Black Friday 2026 su Amazon",
+      "testo": [
+        "Il Black Friday 2026 è venerdì 27 novembre, seguito dal Cyber Monday lunedì 30 novembre. In quei giorni su Amazon.it escono migliaia di sconti, ma non tutti sono veri affari.",
+        "Noi controlliamo ogni prezzo sullo storico di Amazon e scriviamo sempre con quale prezzo è calcolato lo sconto. Le offerte del Black Friday compariranno qui man mano che le verifichiamo: nel frattempo trovi sotto le offerte attive di oggi.",
+        "Per ricevere le offerte appena escono, iscriviti al canale Telegram."
+      ]
     }
   ]
 }

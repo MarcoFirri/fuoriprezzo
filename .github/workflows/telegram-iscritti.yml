@@ -1,0 +1,39 @@
+name: Iscritti Telegram
+
+on:
+  schedule:
+    # Ogni lunedì alle 8:30 (ora italiana estiva): conta gli iscritti al canale e li salva in data/telegram-iscritti.json
+    - cron: '30 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: telegram-iscritti
+  cancel-in-progress: false
+
+jobs:
+  iscritti:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Conta gli iscritti
+        run: node .github/scripts/telegram.mjs
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          AZIONE: iscritti
+      - name: Salva
+        run: |
+          [ -f data/telegram-iscritti.json ] || exit 0
+          git add data/telegram-iscritti.json
+          git diff --cached --quiet && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Iscritti Telegram $(date -u +%F)"
+          for i in 1 2 3; do git pull --rebase origin main && git push origin HEAD:main && exit 0; sleep 5; done
+          exit 1
