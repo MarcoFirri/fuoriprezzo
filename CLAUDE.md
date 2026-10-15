@@ -16,8 +16,8 @@ Scrivi a Marco sempre in **italiano semplice**: non è un tecnico.
 | File | A cosa serve |
 |---|---|
 | `data/offerte.js` | Tutte le offerte (`FP_OFFERTE`) e la configurazione (`FP_CONFIG`: tag, `sceltaDelGiorno`). Ogni push che lo modifica avvia Telegram e Instagram. |
-| `data/seo.json` | Titoli, descrizioni e testi di home e categorie. |
-| `tools/build.mjs` | Genera `index.html`, `offerta/<asin>/`, `categoria/<slug>/`, `sitemap.xml`, `robots.txt`. **Eseguirlo a ogni modifica** di `data/` o `templates/`. |
+| `data/seo.json` | Titoli, descrizioni e testi di home, categorie e pagine speciali (`pagine`: `/offerte-oggi/`, `/black-friday/`). |
+| `tools/build.mjs` | Genera `index.html`, `offerta/<asin>/`, `categoria/<slug>/`, le pagine speciali, `sitemap.xml`, `robots.txt`. **Eseguirlo a ogni modifica** di `data/` o `templates/`. |
 | `templates/index.html` | Modello della home (non modificare `index.html` a mano). |
 | `tools/render_post.py ASIN` | Crea le immagini social: `img/<ASIN>.png` (Telegram) e `img/<ASIN>-ig.jpg` (Instagram). Richiede `img/<ASIN>.svg`. |
 | `tools/render_reel.py ASIN` | Crea il reel `img/<ASIN>-reel.mp4` (12 secondi, con la nostra base musicale `assets/musica/base.m4a`, creata da `tools/musica.py`: mai brani di altri) e la storia `img/<ASIN>-story.jpg`. Richiede `img/<ASIN>.svg` e ffmpeg. |
@@ -26,7 +26,7 @@ Scrivi a Marco sempre in **italiano semplice**: non è un tecnico.
 | `favicon.svg` | Icona del sito (etichetta rossa). Dopo averla cambiata: `python3 tools/render_favicon.py` rigenera `favicon.ico`, `favicon-96.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`. |
 | `img/<ASIN>.svg` | Illustrazione del prodotto disegnata da noi. |
 | `assets/app.js`, `assets/style.css` | Sito interattivo (home, ricerca, schede). |
-| `.github/workflows/` | `telegram.yml`, `instagram.yml` (ogni ora decide se pubblicare), `instagram-strategia.yml` (ogni mattina), `instagram-insights.yml`. |
+| `.github/workflows/` | `telegram.yml`, `instagram.yml` (ogni ora decide se pubblicare), `instagram-strategia.yml` (ogni mattina), `instagram-insights.yml`, `telegram-iscritti.yml` (ogni lunedì salva gli iscritti al canale in `data/telegram-iscritti.json`). |
 
 ## Come si pubblica un'offerta
 1. Leggere la pagina Amazon `https://www.amazon.it/dp/<ASIN>` nel Chrome di Marco: titolo, prezzo, prezzo di riferimento mostrato da Amazon e il suo nome esatto ("Prezzo più basso ultimi 30gg", "Prezzo consigliato"…), eventuale scadenza dell'offerta lampo, valutazione e numero di recensioni. Se c'è, aprire anche "Cronologia dei prezzi" per lo storico.
