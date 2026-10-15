@@ -3,7 +3,7 @@
 // Gira su GitHub Actions (a ogni modifica delle offerte e ogni ora). Azioni: pubblica (default), verifica, rinnova-token.
 import vm from 'node:vm';
 import fs from 'node:fs';
-import { decidi, leggiStrategia, sconto } from './instagram-piano.mjs';
+import { decidi, leggiStrategia, sconto, asinDelPost } from './instagram-piano.mjs';
 
 const TOKEN = process.env.INSTAGRAM_TOKEN || '';
 const ACTION = (process.env.AZIONE || 'pubblica').trim();
@@ -111,7 +111,8 @@ async function pubblica(userId, params, attese = 20){
 async function pubblicaFeed(userId, o, formato, apertura){
   const url = SITE + FILE[formato === 'reel' ? 'reel' : 'ig'](o.asin);
   await online(url);
-  if (formato === 'reel') await pubblica(userId, { media_type: 'REELS', video_url: url, caption: caption(o, apertura), share_to_feed: 'true' }, 60);
+  // I reel vanno solo nella sezione Reels: nella griglia ci sono i post classici (scelta di Marco, 15/10/2026)
+  if (formato === 'reel') await pubblica(userId, { media_type: 'REELS', video_url: url, caption: caption(o, apertura), share_to_feed: 'false' }, 60);
   else await pubblica(userId, { image_url: url, caption: caption(o, apertura) });
   console.log(`Pubblicato su Instagram: ${o.asin} come ${formato}.`);
 }
@@ -132,11 +133,21 @@ if (FORCE) {
   if (DRY) { for (const o of valide) console.log(caption(o) + '\n---'); process.exit(0); }
   const me = await ig('me', { fields: 'user_id' });
   let failed = false;
+  // "tutto" = reel (solo sezione Reels) + post classico nella griglia + storia, saltando ciò che c'è già
+  const gia = FORCE_FORMATO === 'tutto'
+    ? ((await ig(`${me.user_id}/media`, { fields: 'caption,media_product_type', limit: '25' })).data || []) : [];
+  const presente = (o, tipo) => gia.some(m => asinDelPost(m.caption, now.offers) === o.asin && (m.media_product_type === 'REELS') === (tipo === 'reel'));
   for (const o of valide) {
-    const formato = FORCE_FORMATO === 'reel' && esiste(o.asin, 'reel') ? 'reel' : 'foto';
     try {
-      if (FORCE_FORMATO === 'storia') await pubblicaStoria(me.user_id, o);
-      else await pubblicaFeed(me.user_id, o, formato, 'scelta');
+      if (FORCE_FORMATO === 'tutto') {
+        if (!esiste(o.asin, 'reel')) console.log(`Manca il reel di ${o.asin}.`);
+        else if (presente(o, 'reel')) console.log(`Reel di ${o.asin} già presente: non lo ripubblico.`);
+        else await pubblicaFeed(me.user_id, o, 'reel', 'scelta');
+        if (presente(o, 'foto')) console.log(`Post di ${o.asin} già presente nella griglia.`);
+        else await pubblicaFeed(me.user_id, o, 'foto', 'scelta');
+        if (esiste(o.asin, 'story')) await pubblicaStoria(me.user_id, o);
+      } else if (FORCE_FORMATO === 'storia') await pubblicaStoria(me.user_id, o);
+      else await pubblicaFeed(me.user_id, o, FORCE_FORMATO === 'reel' && esiste(o.asin, 'reel') ? 'reel' : 'foto', 'scelta');
     } catch (e) { failed = true; console.error(`Errore per ${o.asin}: ${e.message}`); }
   }
   process.exit(failed ? 1 : 0);

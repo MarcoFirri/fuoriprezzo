@@ -25,7 +25,7 @@ on:
       formato:
         description: "Formato per la pubblicazione manuale"
         type: choice
-        options: [foto, reel, storia]
+        options: [foto, reel, storia, tutto]
         default: foto
 
 # Mai due pubblicazioni nello stesso momento
