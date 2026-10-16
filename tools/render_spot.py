@@ -1,8 +1,8 @@
 """Spot pubblicitario di FuoriPrezzo con voce: img/<ASIN>-reel.mp4 (1080x1920, circa 20 secondi).
 Gancio, chi siamo, l'offerta con il prezzo che scende, chiusura. Musica nostra (assets/musica/base.m4a),
-effetti sonori sintetizzati qui e voce fuori campo letta da assets/voce/<ASIN>/01..05.m4a
+effetti sonori sintetizzati qui e voce fuori campo letta da assets/voce/<ASIN>/01..05.m4a o .mp3
 (registrata con la sintesi vocale; se manca la crea qui con pico2wave in italiano, o espeak-ng).
-Sostituisce il reel di render_reel.py. Uso: python3 tools/render_spot.py ASIN   (serve ffmpeg)"""
+Sostituisce il reel di render_reel.py. Uso: python3 tools/render_spot.py ASIN   (serve ffmpeg; SENZA_VOCE=1 per farlo solo con musica ed effetti)"""
 import json, os, subprocess, sys, tempfile, datetime, wave
 from zoneinfo import ZoneInfo
 import numpy as np
@@ -51,16 +51,23 @@ FRASI = ['Fermo! Stai pagando troppo?', 'Su Fuori Prezzo solo offerte vere su Am
          frase3, (nota + '.') if nota else 'Prezzo verificato su Amazon.', 'Segui Fuori Prezzo. Il link è in bio!']
 voce_dir = f'assets/voce/{asin}'
 clips = []
+SENZA = [2.4, 3.6, 5.2, 3.2, 2.6]  # durata delle scene se non c'è voce
 for i in range(5):
-    f = f'{voce_dir}/{i + 1:02d}.m4a'
-    if not os.path.exists(f):
+    f = next((x for x in (f'{voce_dir}/{i + 1:02d}.m4a', f'{voce_dir}/{i + 1:02d}.mp3') if os.path.exists(x)), None)
+    if os.environ.get('SENZA_VOCE') or (not f and os.path.isdir(voce_dir)):
+        clips.append((None, SENZA[i])); continue  # voce registrata a parte: una frase mancante resta solo scritta
+    if f:  # voce registrata (es. ElevenLabs): tolgo i silenzi ai bordi e accelero appena
+        g = f'{tmp}/v{i}.wav'
+        subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', f, '-af', 'silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse,atempo=1.06', g], check=True)
+        f = g
+    else:
         f = f'{tmp}/v{i}.wav'
         if subprocess.run(['which', 'pico2wave'], capture_output=True).returncode == 0:
             subprocess.run(['pico2wave', '-l', 'it-IT', '-w', f'{tmp}/raw{i}.wav', FRASI[i]], capture_output=True)
             subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', f'{tmp}/raw{i}.wav', '-af', 'silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse,atempo=1.22', f], capture_output=True)
         elif subprocess.run(['which', 'espeak-ng'], capture_output=True).returncode == 0:
             subprocess.run(['espeak-ng', '-v', 'mb-it4', '-s', '170', '-w', f, FRASI[i]], capture_output=True)
-    clips.append((f, durata(f)) if os.path.exists(f) else (None, 2.2))
+    clips.append((f, durata(f)) if os.path.exists(f) else (None, SENZA[i]))
 print('voce:', *[f'{FRASI[i]} [{c[1]:.1f}s]' for i, c in enumerate(clips)], sep='\n  ')
 
 # Scene agganciate alla voce: ogni scena dura quanto la sua frase più un respiro
@@ -72,12 +79,13 @@ t4 = t3 + clips[2][1] + .25               # nota (sempre sull'offerta)
 t5 = t4 + max(clips[3][1], 2.4) + gap     # chiusura
 END = t5 + max(clips[4][1], 2.2) + 1.6
 starts = [t1, t2, t3, t4, t5]
+tp = max(1.3, clips[2][1] * 0.55 if clips[2][0] else 1.3)  # il prezzo scende quando la voce dice "oggi"
 D = lambda x: f'{x:.2f}s'
 
 TAG = '<svg viewBox="0 0 40 40"><path d="M21.5 3.5h11a4 4 0 0 1 4 4v11a4 4 0 0 1-1.2 2.8L21.6 35a4 4 0 0 1-5.7 0L5 24.1a4 4 0 0 1 0-5.7L18.7 4.7a4 4 0 0 1 2.8-1.2z" fill="#FF4141"/><circle cx="29" cy="11" r="3" fill="#17112A"/><path d="M12 22l9-9" stroke="#17112A" stroke-width="3" stroke-linecap="round"/></svg>'
 BRAND = f'<div class="brand">{TAG}<span>fuori<b>prezzo</b><i>.it</i></span></div>'
 top = '🔥 Scelta del giorno' if data['cfg'].get('sceltaDelGiorno') == asin else (o.get('etichetta') or 'Offerta')
-coriandoli = ''.join(f'<i style="left:{(k * 137) % 1000 + 40}px;background:{["#FFD43B", "#FF4141", "#fff", col][k % 4]};animation-delay:{t3 + 2.6 + (k % 7) * .05:.2f}s;--dx:{(k * 53) % 300 - 150}px;--r:{(k * 97) % 720}deg"></i>' for k in range(36))
+coriandoli = ''.join(f'<i style="left:{(k * 137) % 1000 + 40}px;background:{["#FFD43B", "#FF4141", "#fff", col][k % 4]};animation-delay:{t3 + tp + 1.3 + (k % 7) * .05:.2f}s;--dx:{(k * 53) % 300 - 150}px;--r:{(k * 97) % 720}deg"></i>' for k in range(36))
 
 # Zone sicure: 250px sopra, 340px sotto (pulsanti di Instagram)
 html = f"""<html><head><style>
@@ -116,14 +124,14 @@ body{{margin:0;font-family:'Inter Display','Inter',sans-serif}}
 .s3 .lbl{{position:absolute;left:56px;top:256px;background:#FF4141;color:#fff;font-weight:900;font-size:32px;letter-spacing:.05em;text-transform:uppercase;padding:14px 26px;border-radius:999px;animation:fade .4s {D(t3 + .3)} both}}
 .s3 .ill{{position:absolute;left:50%;top:620px;width:720px;transform:translate(-50%,-50%);filter:drop-shadow(0 30px 34px rgba(23,17,42,.35));animation:zoomin .9s {D(t3 + .1)} cubic-bezier(.2,1.3,.3,1) both,bob 2.4s {D(t3 + 1)} ease-in-out infinite alternate}}
 .s3 .shine{{position:absolute;top:0;bottom:0;width:180px;left:-300px;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-18deg);animation:sweep .9s {D(t3 + 1.2)} ease-in both}}
-.s3 .sticker{{position:absolute;right:60px;top:820px;z-index:3;background:#FFD43B;color:#17112A;font-weight:900;font-size:110px;letter-spacing:-.04em;padding:14px 34px;border-radius:30px;box-shadow:10px 10px 0 #0A0712;animation:stamp .5s {D(t3 + 2.6)} cubic-bezier(.3,1.6,.5,1) both,wob 1s {D(t3 + 3.2)} ease-in-out infinite alternate}}
+.s3 .sticker{{position:absolute;right:60px;top:820px;z-index:3;background:#FFD43B;color:#17112A;font-weight:900;font-size:110px;letter-spacing:-.04em;padding:14px 34px;border-radius:30px;box-shadow:10px 10px 0 #0A0712;animation:stamp .5s {D(t3 + tp + 1.3)} cubic-bezier(.3,1.6,.5,1) both,wob 1s {D(t3 + tp + 1.9)} ease-in-out infinite alternate}}
 .s3 .bot{{position:absolute;left:56px;right:56px;top:1030px;display:flex;flex-direction:column;gap:20px}}
 .s3 .t{{font-weight:800;font-size:52px;line-height:1.08;letter-spacing:-.03em;animation:up .5s {D(t3 + .5)} both}}
-.s3 .pr{{display:flex;align-items:flex-end;gap:28px;animation:shake .4s {D(t3 + 2.6)} both}}
+.s3 .pr{{display:flex;align-items:flex-end;gap:28px;animation:shake .4s {D(t3 + tp + 1.3)} both}}
 .s3 .now{{font-weight:900;font-size:150px;line-height:.85;letter-spacing:-.05em;color:#FF4141;font-variant-numeric:tabular-nums;animation:fade .3s {D(t3 + 1.1)} both}}
 .s3 .was{{position:relative;font-size:52px;color:#A99FC2;padding-bottom:8px;animation:fade .4s {D(t3 + 1.1)} both}}
-.s3 .was::after{{content:"";position:absolute;left:-4px;right:-4px;top:42%;height:6px;background:#FF4141;transform-origin:left;animation:strike .3s {D(t3 + 2.4)} both}}
-.s3 .ref{{font-size:34px;color:#A99FC2;animation:fade .5s {D(t3 + 3)} both}}
+.s3 .was::after{{content:"";position:absolute;left:-4px;right:-4px;top:42%;height:6px;background:#FF4141;transform-origin:left;animation:strike .3s {D(t3 + tp + 1.1)} both}}
+.s3 .ref{{font-size:34px;color:#A99FC2;animation:fade .5s {D(t3 + tp + 1.7)} both}}
 .s3 .nota{{font-size:38px;font-weight:800;color:#17112A;background:#FFD43B;line-height:1.25;padding:18px 24px;border-radius:20px;animation:side .45s {D(t4)} cubic-bezier(.2,1.4,.4,1) both}}
 .s3 .conf i{{position:absolute;top:900px;width:18px;height:30px;border-radius:4px;opacity:0;animation:conf 1.8s cubic-bezier(.2,.6,.4,1) both;z-index:4}}
 .f3{{animation:flash .35s {D(t5 - .1)} both}}
@@ -171,7 +179,7 @@ body{{margin:0;font-family:'Inter Display','Inter',sans-serif}}
 </div></body></html>"""
 
 # Il prezzo "scende" da quello di riferimento a quello di oggi
-P0, P1, T0, T1 = (ref or o['prezzo']), o['prezzo'], t3 + 1.3, t3 + 2.5
+P0, P1, T0, T1 = (ref or o['prezzo']), o['prezzo'], t3 + tp, t3 + tp + 1.2
 def prezzo_a(t):
     if t <= T0: return P0
     if t >= T1: return P1
@@ -215,7 +223,7 @@ put(hit(), t1, .9)
 for at in (t2, t3, t5): put(whoosh(), at - .25, .7)
 k = T0
 while k < T1: put(tick(), k, .25); k += .08
-put(ding(), T1, .55); put(hit(), t3 + 2.6, .7)
+put(ding(), T1, .55); put(hit(), t3 + tp + 1.3, .7)
 sfx = np.tanh(sfx) * .8
 sfx_wav = f'{tmp}/sfx.wav'
 with wave.open(sfx_wav, 'wb') as w:
