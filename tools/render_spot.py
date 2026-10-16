@@ -54,7 +54,7 @@ clips = []
 SENZA = [2.4, 3.6, 5.2, 3.2, 2.6]  # durata delle scene se non c'è voce
 for i in range(5):
     f = next((x for x in (f'{voce_dir}/{i + 1:02d}.m4a', f'{voce_dir}/{i + 1:02d}.mp3') if os.path.exists(x)), None)
-    if os.environ.get('SENZA_VOCE') or (not f and os.path.isdir(voce_dir)):
+    if not f or os.environ.get('SENZA_VOCE'):  # Marco: niente voce sintetica
         clips.append((None, SENZA[i])); continue  # voce registrata a parte: una frase mancante resta solo scritta
     if f:  # voce registrata (es. ElevenLabs): tolgo i silenzi ai bordi e accelero appena
         g = f'{tmp}/v{i}.wav'
