@@ -21,6 +21,7 @@ Scrivi a Marco sempre in **italiano semplice**: non è un tecnico.
 | `templates/index.html` | Modello della home (non modificare `index.html` a mano). |
 | `tools/render_post.py ASIN` | Crea le immagini social: `img/<ASIN>.png` (Telegram) e `img/<ASIN>-ig.jpg` (Instagram). Richiede `img/<ASIN>.svg`. |
 | `tools/render_reel.py ASIN` | Crea il reel `img/<ASIN>-reel.mp4` (12 secondi, con la nostra base musicale `assets/musica/base.m4a`, creata da `tools/musica.py`: mai brani di altri) e la storia `img/<ASIN>-story.jpg`. Richiede `img/<ASIN>.svg` e ffmpeg. |
+| `tools/render_spot.py ASIN` | Spot pubblicitario con voce fuori campo (circa 20 secondi: gancio, chi siamo, prezzo che scende, chiusura), musica nostra ed effetti sonori sintetizzati. Voce da `assets/voce/<ASIN>/01..05.m4a` se c'è, altrimenti sintesi vocale italiana (`pico2wave`). Sostituisce `img/<ASIN>-reel.mp4`: usarlo dopo `render_reel.py` quando Marco chiede un reel pubblicitario con parlato. |
 | `tools/render_promo.py ASIN` | Reel in stile pubblicità di FuoriPrezzo (15 secondi: domanda, chi siamo, offerta, chiusura). Sostituisce `img/<ASIN>-reel.mp4`; usarlo dopo `render_reel.py` quando Marco chiede un reel "pubblicità". |
 | `data/instagram-strategia.json` | Strategia Instagram (formato, orari, prima riga delle didascalie, storie al giorno). La aggiorna da sola ogni mattina il workflow `instagram-strategia.yml`. |
 | `favicon.svg` | Icona del sito (etichetta rossa). Dopo averla cambiata: `python3 tools/render_favicon.py` rigenera `favicon.ico`, `favicon-96.png`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`. |
@@ -30,9 +31,10 @@ Scrivi a Marco sempre in **italiano semplice**: non è un tecnico.
 
 ## Come si pubblica un'offerta
 1. Leggere la pagina Amazon `https://www.amazon.it/dp/<ASIN>` nel Chrome di Marco: titolo, prezzo, prezzo di riferimento mostrato da Amazon e il suo nome esatto ("Prezzo più basso ultimi 30gg", "Prezzo consigliato"…), eventuale scadenza dell'offerta lampo, valutazione e numero di recensioni. Se c'è, aprire anche "Cronologia dei prezzi" per lo storico.
-2. Aggiungere l'offerta in cima a `FP_OFFERTE` con i campi: `asin, categoria, icona, illustrazione, titolo, titoloBreve, prezzo, prezzoRiferimento, tipoRiferimento, riferimentoBreve, badge, nota?, etichetta?, scadenza?, controllato, valutazione, recensioni, storico`.
+2. Aggiungere l'offerta in cima a `FP_OFFERTE` con i campi: `asin, categoria, icona, illustrazione, titolo, titoloBreve, prezzo, prezzoRiferimento, tipoRiferimento, riferimentoBreve, badge, nota?, etichetta?, scadenza?, instagramDalle?, controllato, valutazione, recensioni, storico`.
    - `controllato` = data e ora reali della lettura (ISO con fuso di Roma, es. `2026-10-13T08:31:00+02:00`).
    - `tipoRiferimento` = il nome che usa Amazon, in minuscolo. Lo sconto si calcola **solo** su quel prezzo.
+   - `instagramDalle` = se si vuole un orario preciso per post e reel (es. `2026-10-16T19:00:00+02:00`): prima di allora l'agente non li pubblica.
    - `nota` = un'informazione vera dallo storico di Amazon (es. "È il prezzo più basso degli ultimi 12 mesi su Amazon").
 3. Disegnare `img/<ASIN>.svg` (prodotto generico, senza loghi né marchi), poi `python3 tools/render_post.py <ASIN>` e `python3 tools/render_reel.py <ASIN>`.
 4. Se è la nuova scelta del giorno: `FP_CONFIG.sceltaDelGiorno = '<ASIN>'`.

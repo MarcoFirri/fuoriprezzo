@@ -80,7 +80,8 @@ export function decidi({ now, offerte, cfg, strategia, recenti, storie, file }){
   const ultimo = contano.map(m => new Date(m.timestamp)).sort((a, b) => b - a)[0];
   const in24 = contano.filter(m => now - new Date(m.timestamp) < 24 * H).length;
   const maxGiorno = Math.min(L.postAlGiorno, clamp(strategia.postAlGiorno | 0, 1, 2));
-  let candidati = offerte.filter(o => valida(o) && !pubblicati.has(o.asin) && file(o.asin, 'ig'));
+  // instagramDalle (facoltativo) = non prima di quest'ora: l'orario scelto per quell'offerta
+  let candidati = offerte.filter(o => valida(o) && !pubblicati.has(o.asin) && file(o.asin, 'ig') && !(o.instagramDalle && now < new Date(o.instagramDalle)));
   if (prudente) candidati = candidati.filter(o => o.asin === pick);
   // Orario del giorno: scelto dalla strategia, uguale per tutte le esecuzioni della giornata
   const orario = +scegli(strategia.orari, `${oggi}-orario-${in24}`);

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 320">
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0E0C12"/>
+      <stop offset=".35" stop-color="#3E3A46"/>
+      <stop offset=".7" stop-color="#24212A"/>
+      <stop offset="1" stop-color="#08070B"/>
+    </linearGradient>
+    <linearGradient id="grip" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#050407"/>
+      <stop offset=".5" stop-color="#1A1820"/>
+      <stop offset="1" stop-color="#050407"/>
+    </linearGradient>
+    <linearGradient id="frame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D8F25A"/>
+      <stop offset="1" stop-color="#9CC41E"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8E95A3"/>
+      <stop offset=".5" stop-color="#F2F4F8"/>
+      <stop offset="1" stop-color="#8E95A3"/>
+    </linearGradient>
+  </defs>
+
+  <ellipse cx="200" cy="300" rx="110" ry="11" fill="#17112A" opacity=".24"/>
+
+  <!-- pettine per la barba, appoggiato a destra -->
+  <g transform="rotate(14 300 232)">
+    <rect x="262" y="206" width="76" height="20" rx="8" fill="#2A2730"/>
+    <g fill="#3A3642">
+      <rect x="266" y="224" width="5" height="38" rx="2.5"/><rect x="276" y="224" width="5" height="38" rx="2.5"/>
+      <rect x="286" y="224" width="5" height="38" rx="2.5"/><rect x="296" y="224" width="5" height="38" rx="2.5"/>
+      <rect x="306" y="224" width="5" height="38" rx="2.5"/><rect x="316" y="224" width="5" height="38" rx="2.5"/>
+      <rect x="326" y="224" width="5" height="38" rx="2.5"/>
+    </g>
+    <text x="300" y="221" font-family="Inter, sans-serif" font-size="12" font-weight="800" fill="#C9C3DA" text-anchor="middle">3 mm</text>
+  </g>
+
+  <g transform="rotate(-10 190 170)">
+    <!-- testina: lama con cornice -->
+    <rect x="138" y="22" width="104" height="40" rx="14" fill="url(#frame)"/>
+    <rect x="148" y="30" width="84" height="24" rx="8" fill="#22202A"/>
+    <rect x="152" y="38" width="76" height="8" rx="4" fill="url(#steel)"/>
+    <g stroke="#5A6070" stroke-width="1.4">
+      <path d="M158 38v8M166 38v8M174 38v8M182 38v8M190 38v8M198 38v8M206 38v8M214 38v8M222 38v8"/>
+    </g>
+    <!-- collo snodato -->
+    <path d="M170 60h40l-6 30h-28z" fill="#2E2B36"/>
+    <rect x="176" y="62" width="28" height="6" rx="3" fill="#47434F"/>
+    <!-- manico -->
+    <rect x="164" y="86" width="52" height="196" rx="24" fill="url(#body)"/>
+    <!-- impugnatura -->
+    <rect x="171" y="168" width="38" height="104" rx="18" fill="url(#grip)"/>
+    <g fill="#2B2832">
+      <rect x="178" y="190" width="24" height="3" rx="1.5"/><rect x="178" y="200" width="24" height="3" rx="1.5"/>
+      <rect x="178" y="210" width="24" height="3" rx="1.5"/><rect x="178" y="220" width="24" height="3" rx="1.5"/>
+      <rect x="178" y="230" width="24" height="3" rx="1.5"/><rect x="178" y="240" width="24" height="3" rx="1.5"/>
+    </g>
+    <!-- pulsante e spia batteria -->
+    <circle cx="190" cy="132" r="11" fill="#D8F25A"/>
+    <path d="M190 126v7M185 129a7 7 0 1 0 10 0" fill="none" stroke="#17112A" stroke-width="2.2" stroke-linecap="round"/>
+    <rect x="186" y="152" width="8" height="3" rx="1.5" fill="#D8F25A" opacity=".85"/>
+    <!-- riflesso -->
+    <rect x="171" y="96" width="6" height="170" rx="3" fill="#FFFFFF" opacity=".16"/>
+  </g>
+</svg>

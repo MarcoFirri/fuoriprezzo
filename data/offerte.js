@@ -6,14 +6,37 @@
   - scadenza: per le offerte a tempo, quando terminano
   - illustrazione: immagine del prodotto disegnata per il sito (cartella img)
   - nota: frase in più mostrata nei post e nella scheda (es. confronto con lo storico prezzi di Amazon)
+  - instagramDalle: (facoltativo) post e reel su Instagram non prima di quest'ora
   - icona: disegno mostrato al posto della foto (headphones, laptop, house, pot, dumbbell, gamepad, bottle, wrench, camera)
 */
 window.FP_CONFIG = {
   tag: 'marcofirri-21',
-  sceltaDelGiorno: 'B0F1G94CQV'
+  sceltaDelGiorno: 'B0DCFYVR1Z'
 };
 
 window.FP_OFFERTE = [
+  {
+    asin: 'B0DCFYVR1Z',
+    categoria: 'bellezza',
+    icona: 'bottle',
+    illustrazione: 'img/B0DCFYVR1Z.svg',
+    titolo: 'Philips OneBlade QP2834/31 - Regolabarba elettrico 360 autentico, per viso e corpo, 3 lame da 360, 4 pettini per barba (1, 2, 3, 5 mm), 1 kit per il corpo',
+    titoloBreve: 'Regolabarba Philips OneBlade viso e corpo con 3 lame 360',
+    prezzo: 39.99,
+    prezzoRiferimento: 64.99,
+    tipoRiferimento: 'prezzo mediano',
+    riferimentoBreve: 'Mediano',
+    badge: 'Sotto il minimo 30 gg',
+    nota: 'Costa meno del prezzo più basso degli ultimi 30 giorni indicato da Amazon (50,63 €)',
+    etichetta: 'Offerta a tempo',
+    instagramDalle: '2026-10-16T19:00:00+02:00',
+    controllato: '2026-10-16T11:58:00+02:00',
+    valutazione: 4.4,
+    recensioni: 4979,
+    storico: [
+      { data: '2026-10-16', prezzo: 39.99 }
+    ]
+  },
   {
     asin: 'B0F1G94CQV',
     categoria: 'bellezza',
