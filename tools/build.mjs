@@ -134,10 +134,15 @@ function crumbs(list){
 fs.rmSync('offerta', { recursive: true, force: true });
 for (const o of OFFERS) {
   const c = CAT[o.categoria] || CATS[0], ex = expired(o), d = disc(o), url = pageUrl(o);
-  const title = ex ? `${short(o)}: offerta terminata | FuoriPrezzo`
-    : `${short(o)} a ${eur(o.prezzo)}${d > 0 ? ` (−${d}%)` : ''} | FuoriPrezzo`;
-  const desc = ex ? `L'offerta su ${short(o)} è terminata. Controlla il prezzo attuale su Amazon.it e scopri le altre offerte verificate di FuoriPrezzo.`
-    : `${short(o)} a ${eur(o.prezzo)} su Amazon.it${o.prezzoRiferimento ? `, invece di ${eur(o.prezzoRiferimento)} (${o.tipoRiferimento})` : ''}. ${o.nota ? o.nota + '. ' : ''}Prezzo verificato il ${dataOra(new Date(o.controllato))}.`;
+  // Titoli entro ~60 caratteri: se il nome del prodotto è lungo si toglie " | FuoriPrezzo"
+  const titleBase = ex ? `${short(o)}: offerta terminata` : `${short(o)} a ${eur(o.prezzo)}${d > 0 ? ` (−${d}%)` : ''}`;
+  const title = titleBase.length + 14 <= 62 ? `${titleBase} | FuoriPrezzo` : titleBase;
+  // Descrizioni entro ~155 caratteri: la nota si aggiunge solo se c'è spazio
+  const verif = `Prezzo verificato il ${dataOra(new Date(o.controllato))}.`;
+  const verifBreve = `Verificato il ${new Intl.DateTimeFormat('it-IT', { ...tz, day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(o.controllato))}.`;
+  const base = `${short(o)} a ${eur(o.prezzo)} su Amazon.it${o.prezzoRiferimento ? `, invece di ${eur(o.prezzoRiferimento)} (${o.tipoRiferimento})` : ''}.`;
+  const desc = ex ? `L'offerta su ${short(o)} è terminata. Controlla il prezzo attuale su Amazon.it e le altre offerte verificate.`
+    : [o.nota ? `${base} ${o.nota}. ${verif}` : '', `${base} ${verif}`, `${base} ${verifBreve}`].find(t => t && t.length <= 160) || base;
   const product = { '@context': 'https://schema.org', '@type': 'Product', name: o.titolo, sku: o.asin, url: SITE + url, image: ogImg(o), category: c.nome };
   if (!ex) product.offers = { '@type': 'Offer', price: o.prezzo.toFixed(2), priceCurrency: 'EUR', availability: 'https://schema.org/InStock', url: aff(o), ...(o.scadenza ? { priceValidUntil: o.scadenza.slice(0, 10) } : {}) };
   const others = sorted.filter(x => x.asin !== o.asin && !expired(x)).slice(0, 4);
