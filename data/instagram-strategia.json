@@ -1,6 +1,6 @@
 {
   "nota": "Strategia Instagram: la aggiorna ogni giorno .github/scripts/instagram-strategia.mjs in base ai risultati. I limiti di sicurezza sono fissi in .github/scripts/instagram-piano.mjs.",
-  "aggiornata": "2026-10-18",
+  "aggiornata": "2026-10-22",
   "formati": {
     "reel": 0.5,
     "foto": 0.5
@@ -11,8 +11,8 @@
     "nota": 0.33
   },
   "orari": {
-    "9": 0.2,
     "11": 0.4,
+    "15": 0.2,
     "19": 0.4
   },
   "postAlGiorno": 1,
@@ -21,6 +21,6 @@
   "motivi": [
     "Formati: servono almeno 3 reel e 3 foto per decidere (ora 2 e 4).",
     "Didascalie: ancora poche prove per ogni tipo di prima riga.",
-    "Orari: i migliori finora sono le 11 e le 19; ogni tanto provo le 9."
+    "Orari: i migliori finora sono le 11 e le 19; ogni tanto provo le 15."
   ]
 }
